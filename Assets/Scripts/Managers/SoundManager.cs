@@ -22,7 +22,18 @@ public class SoundManager : MonoBehaviour
   {
     AudioClip clip = _audioClipRefsSo.GetClip(key);
     if (clip != null)
-      AudioSource.PlayClipAtPoint(clip, position, _volume);
+    {
+      GameObject soundObj = new("OneShotSound_" + key);
+      soundObj.transform.position = position;
+
+      AudioSource source = soundObj.AddComponent<AudioSource>();
+      source.clip = clip;
+      source.volume = _volume;
+      source.spatialBlend = 0f; // 2D sound
+      source.Play();
+
+      Destroy(soundObj, clip.length);
+    }
   }
 
   public void PlayLoopingSound(string key, Vector3 position, bool spatial = true)
