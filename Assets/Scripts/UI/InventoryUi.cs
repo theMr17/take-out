@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUi : MonoBehaviour
 {
@@ -33,7 +34,21 @@ public class InventoryUi : MonoBehaviour
 
   private void UpdateSelectionIndicator(int selectedSlot)
   {
-    inventorySelectionIndicator.transform.SetParent(inventorySlotsContainer.GetChild(selectedSlot));
+    GameObject selectedSlotObject = inventorySlotsContainer.GetChild(selectedSlot).gameObject;
+
+    inventorySelectionIndicator.transform.SetParent(selectedSlotObject.transform);
     inventorySelectionIndicator.transform.localPosition = Vector3.zero;
+
+    // Highlight the selected slot
+    selectedSlotObject.GetComponent<Image>().color = Color.lightGray;
+
+    // Reset colors for all other slots
+    for (int i = 0; i < inventorySlotsContainer.childCount; i++)
+    {
+      if (i != selectedSlot)
+      {
+        inventorySlotsContainer.GetChild(i).GetComponent<Image>().color = Color.white;
+      }
+    }
   }
 }
