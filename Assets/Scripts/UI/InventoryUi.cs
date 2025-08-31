@@ -5,7 +5,6 @@ public class InventoryUi : MonoBehaviour
 {
   [SerializeField] private Transform inventorySlotsContainer;
   [SerializeField] private GameObject inventorySlotPrefab;
-  [SerializeField] private GameObject inventorySelectionIndicator;
 
   private void Start()
   {
@@ -25,6 +24,7 @@ public class InventoryUi : MonoBehaviour
     for (int i = 0; i < InventoryManager.Instance.GetInventorySize(); i++)
     {
       InventorySlotUi slotItem = Instantiate(inventorySlotPrefab, inventorySlotsContainer).GetComponent<InventorySlotUi>();
+      slotItem.SetSelected(false);
       slotItem.ClearSlot();
     }
   }
@@ -43,19 +43,17 @@ public class InventoryUi : MonoBehaviour
   {
     GameObject selectedSlotObject = inventorySlotsContainer.GetChild(selectedSlot).gameObject;
 
-    inventorySelectionIndicator.transform.SetParent(selectedSlotObject.transform);
-    inventorySelectionIndicator.transform.localPosition = Vector3.zero;
-
     // Highlight the selected slot
     selectedSlotObject.GetComponent<Image>().color = Color.lightGray;
+    selectedSlotObject.GetComponent<InventorySlotUi>().SetSelected(true);
 
     // Reset colors for all other slots
     for (int i = 0; i < inventorySlotsContainer.childCount; i++)
     {
-      if (i != selectedSlot)
-      {
-        inventorySlotsContainer.GetChild(i).GetComponent<Image>().color = Color.white;
-      }
+      if (i == selectedSlot) continue;
+
+      inventorySlotsContainer.GetChild(i).GetComponent<Image>().color = Color.white;
+      inventorySlotsContainer.GetChild(i).GetComponent<InventorySlotUi>().SetSelected(false);
     }
   }
 
