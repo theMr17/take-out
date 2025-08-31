@@ -12,6 +12,7 @@ public class InventoryUi : MonoBehaviour
     CreateInventorySlots();
 
     InventoryManager.Instance.OnSlotSelectionChanged += InventoryManager_OnSlotSelectionChanged;
+    InventoryManager.Instance.OnInventorySlotUpdated += InventoryManager_OnInventorySlotUpdated;
   }
 
   private void CreateInventorySlots()
@@ -23,13 +24,19 @@ public class InventoryUi : MonoBehaviour
 
     for (int i = 0; i < InventoryManager.Instance.GetInventorySize(); i++)
     {
-      Instantiate(inventorySlotPrefab, inventorySlotsContainer);
+      InventorySlotUi slotItem = Instantiate(inventorySlotPrefab, inventorySlotsContainer).GetComponent<InventorySlotUi>();
+      slotItem.ClearSlot();
     }
   }
 
   private void InventoryManager_OnSlotSelectionChanged(object sender, InventoryManager.SelectedSlotEventArgs e)
   {
     UpdateSelectionIndicator(e.selectedSlot);
+  }
+
+  private void InventoryManager_OnInventorySlotUpdated(object sender, InventoryManager.InventorySlotEventArgs e)
+  {
+    UpdateInventorySlot(e.slotIndex, e.kitchenObjectSo, e.quantity);
   }
 
   private void UpdateSelectionIndicator(int selectedSlot)
@@ -50,5 +57,11 @@ public class InventoryUi : MonoBehaviour
         inventorySlotsContainer.GetChild(i).GetComponent<Image>().color = Color.white;
       }
     }
+  }
+
+  private void UpdateInventorySlot(int slotIndex, KitchenObjectSO kitchenObjectSo, int quantity)
+  {
+    InventorySlotUi slotItem = inventorySlotsContainer.GetChild(slotIndex).GetComponent<InventorySlotUi>();
+    slotItem.SetItem(kitchenObjectSo, quantity);
   }
 }

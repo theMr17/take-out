@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.U2D;
 
 public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -57,17 +58,25 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
 
   public void OnPointerEnter(PointerEventData eventData)
   {
-    if (TryGetComponent<SpriteRenderer>(out SpriteRenderer spriteRenderer))
+    if (TryGetComponent(out SpriteRenderer spriteRenderer))
     {
       spriteRenderer.color = Color.lightGray;
+    }
+    if (TryGetComponent(out SpriteShapeRenderer spriteShapeRenderer))
+    {
+      spriteShapeRenderer.color = Color.lightGray;
     }
   }
 
   public void OnPointerExit(PointerEventData eventData)
   {
-    if (TryGetComponent<SpriteRenderer>(out SpriteRenderer spriteRenderer))
+    if (TryGetComponent(out SpriteRenderer spriteRenderer))
     {
       spriteRenderer.color = Color.white;
+    }
+    if (TryGetComponent(out SpriteShapeRenderer spriteShapeRenderer))
+    {
+      spriteShapeRenderer.color = new Color(1, 1, 1, 0);
     }
   }
 }
