@@ -36,7 +36,7 @@ public class SoundManager : MonoBehaviour
     }
   }
 
-  public void PlayLoopingSound(string key, Vector3 position, bool spatial = true)
+  public void PlayLoopingSound(string key, Vector3 position, bool spatial = true, float volumeMultiplier = 1f)
   {
     if (_loopingSounds.ContainsKey(key)) return;
 
@@ -49,7 +49,7 @@ public class SoundManager : MonoBehaviour
     AudioSource source = soundObj.AddComponent<AudioSource>();
     source.clip = clip;
     source.loop = true;
-    source.volume = _volume;
+    source.volume = _volume * volumeMultiplier;
     source.spatialBlend = spatial ? 1f : 0f; // 3D or 2D
     source.Play();
 
