@@ -46,8 +46,11 @@ public class InventoryManager : MonoBehaviour
 
   private void Start()
   {
-    InputManager.Instance.OnSlotKeyPressed += SelectSlot;
-    InputManager.Instance.OnScroll += HandleScroll;
+    if (InputManager.Instance != null)
+    {
+      InputManager.Instance.OnSlotKeyPressed += SelectSlot;
+      InputManager.Instance.OnScroll += HandleScroll;
+    }
   }
 
   private void OnDestroy()
