@@ -16,4 +16,4 @@ MonoBehaviour:
   - key: rain
     clip: {fileID: 8300000, guid: fd91ce09d39cebb4e95eaba02d9aff75, type: 3}
   - key: place-cup
-    clip: {fileID: 8300000, guid: db425ed578cc5b547af92460c1674fdc, type: 3}
+    clip: {fileID: 8300000, guid: 03a6960510a70a84a8cca962db015cf0, type: 3}
