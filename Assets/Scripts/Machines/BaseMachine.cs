@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.U2D;
 
 public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -11,6 +10,8 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
   {
     OnAnyObjectPlacedHere = null;
   }
+
+  [SerializeField] protected bool hasSpriteMask = false;
 
   [SerializeField] protected Transform machineTopPoint;
 
@@ -60,11 +61,14 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
   {
     if (TryGetComponent(out SpriteRenderer spriteRenderer))
     {
-      spriteRenderer.color = Color.lightGray;
-    }
-    if (TryGetComponent(out SpriteShapeRenderer spriteShapeRenderer))
-    {
-      spriteShapeRenderer.color = Color.lightGray;
+      if (hasSpriteMask)
+      {
+        spriteRenderer.color = new Color(1, 1, 1, 0.05f);
+      }
+      else
+      {
+        spriteRenderer.color = Color.lightGray;
+      }
     }
   }
 
@@ -72,11 +76,14 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
   {
     if (TryGetComponent(out SpriteRenderer spriteRenderer))
     {
-      spriteRenderer.color = Color.white;
-    }
-    if (TryGetComponent(out SpriteShapeRenderer spriteShapeRenderer))
-    {
-      spriteShapeRenderer.color = new Color(1, 1, 1, 0);
+      if (hasSpriteMask)
+      {
+        spriteRenderer.color = new Color(1, 1, 1, 0);
+      }
+      else
+      {
+        spriteRenderer.color = Color.white;
+      }
     }
   }
 }
