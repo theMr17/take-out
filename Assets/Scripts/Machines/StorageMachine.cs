@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class StorageMachine : BaseMachine
 {
-  [SerializeField] private KitchenObjectSO kitchenObjectSO;
+  [SerializeField] private KitchenObjectSo kitchenObjectSO;
 
   public override void Interact()
   {

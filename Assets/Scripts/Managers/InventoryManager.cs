@@ -10,10 +10,10 @@ public class InventoryManager : MonoBehaviour
 
   class InventoryItem
   {
-    public KitchenObjectSO kitchenObjectSo;
+    public KitchenObjectSo kitchenObjectSo;
     public int Quantity;
 
-    public InventoryItem(KitchenObjectSO kitchenObjectSo, int quantity)
+    public InventoryItem(KitchenObjectSo kitchenObjectSo, int quantity)
     {
       this.kitchenObjectSo = kitchenObjectSo;
       Quantity = quantity;
@@ -32,7 +32,7 @@ public class InventoryManager : MonoBehaviour
   public class InventorySlotEventArgs : EventArgs
   {
     public int slotIndex;
-    public KitchenObjectSO kitchenObjectSo;
+    public KitchenObjectSo kitchenObjectSo;
     public int quantity;
   }
 
@@ -91,7 +91,7 @@ public class InventoryManager : MonoBehaviour
     }
   }
 
-  public void TryPickupObject(KitchenObjectSO kitchenObjectSO)
+  public void TryPickupObject(KitchenObjectSo kitchenObjectSO)
   {
     if (kitchenObjectSO == null)
     {
@@ -112,6 +112,7 @@ public class InventoryManager : MonoBehaviour
       // Check if the slot is full
       if (slotItem.Quantity >= kitchenObjectSO.maxStackedQuantity)
       {
+        SoundManager.Instance.PlaySound("inventory-interact-error", Vector3.zero);
         return;
       }
       slotItem.Quantity++;
@@ -121,6 +122,8 @@ public class InventoryManager : MonoBehaviour
         kitchenObjectSo = kitchenObjectSO,
         quantity = slotItem.Quantity
       });
+
+      SoundManager.Instance.PlaySound("inventory-interact-success", Vector3.zero);
     }
     else if (slotItem == null)
     {
@@ -132,10 +135,13 @@ public class InventoryManager : MonoBehaviour
         kitchenObjectSo = kitchenObjectSO,
         quantity = 1
       });
+
+      SoundManager.Instance.PlaySound("inventory-interact-success", Vector3.zero);
     }
     else
     {
       // Slot is occupied by a different item
+      SoundManager.Instance.PlaySound("inventory-interact-error", Vector3.zero);
     }
   }
 

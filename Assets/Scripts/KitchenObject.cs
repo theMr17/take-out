@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class KitchenObject : MonoBehaviour
 {
-  [SerializeField] private KitchenObjectSO kitchenObjectSO;
+  [SerializeField] private KitchenObjectSo kitchenObjectSO;
 
-  public KitchenObjectSO GetKitchenObjectSO()
+  public KitchenObjectSo GetKitchenObjectSO()
   {
     return kitchenObjectSO;
   }
 
-  public static void SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
+  public static void SpawnKitchenObject(KitchenObjectSo kitchenObjectSO, IKitchenObjectParent kitchenObjectParent)
   {
     KitchenObject kitchenObject = Instantiate(kitchenObjectSO.prefab, kitchenObjectParent.GetKitchenObjectFollowTransform()).GetComponent<KitchenObject>();
     kitchenObjectParent.SetKitchenObject(kitchenObject);

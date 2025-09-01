@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CoffeeMachine : BaseMachine
 {
-  [SerializeField] private KitchenObjectSO cupKitchenObjectSo;
+  [SerializeField] private KitchenObjectSo cupKitchenObjectSo;
 
   public override void Interact()
   {

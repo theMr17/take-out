@@ -17,3 +17,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: fd91ce09d39cebb4e95eaba02d9aff75, type: 3}
   - key: place-cup
     clip: {fileID: 8300000, guid: 03a6960510a70a84a8cca962db015cf0, type: 3}
+  - key: inventory-interact-success
+    clip: {fileID: 8300000, guid: c1ebac6c94892704d82a46f4bbb20b3a, type: 3}
+  - key: inventory-interact-error
+    clip: {fileID: 8300000, guid: c17a8c446c6d2ec4880d007f7db6b3ac, type: 3}

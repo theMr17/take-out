@@ -57,7 +57,7 @@ public class InventoryUi : MonoBehaviour
     }
   }
 
-  private void UpdateInventorySlot(int slotIndex, KitchenObjectSO kitchenObjectSo, int quantity)
+  private void UpdateInventorySlot(int slotIndex, KitchenObjectSo kitchenObjectSo, int quantity)
   {
     InventorySlotUi slotItem = inventorySlotsContainer.GetChild(slotIndex).GetComponent<InventorySlotUi>();
     slotItem.SetItem(kitchenObjectSo, quantity);
