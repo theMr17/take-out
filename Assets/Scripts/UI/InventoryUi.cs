@@ -6,11 +6,11 @@ public class InventoryUi : MonoBehaviour
   [SerializeField] private Transform inventorySlotsContainer;
   [SerializeField] private GameObject inventorySlotPrefab;
 
-  private List<InventorySlotUi> slotUiList = new();
+  private readonly List<InventorySlotUi> slotUiList = new();
 
   private void Awake()
   {
-    CreateInventorySlots();
+    InitializeSlots();
   }
 
   private void Start()
@@ -25,44 +25,40 @@ public class InventoryUi : MonoBehaviour
     InventoryManager.Instance.OnInventorySlotUpdated -= InventoryManager_OnInventorySlotUpdated;
   }
 
-  private void CreateInventorySlots()
+  private void InitializeSlots()
   {
     slotUiList.Clear();
+
     foreach (Transform child in inventorySlotsContainer)
     {
       Destroy(child.gameObject);
     }
 
-    for (int i = 0; i < InventoryManager.GetInventorySize(); i++)
+    int inventorySize = InventoryManager.GetInventorySize();
+    for (int i = 0; i < inventorySize; i++)
     {
-      InventorySlotUi slotItem = Instantiate(inventorySlotPrefab, inventorySlotsContainer).GetComponent<InventorySlotUi>();
-      slotItem.SetSelected(false);
-      slotItem.ClearSlot();
-      slotUiList.Add(slotItem);
+      var slotUi = Instantiate(inventorySlotPrefab, inventorySlotsContainer)
+        .GetComponent<InventorySlotUi>();
+
+      slotUi.SetSelected(false);
+      slotUi.ClearSlot();
+
+      slotUiList.Add(slotUi);
     }
   }
 
   private void InventoryManager_OnSlotSelectionChanged(object sender, InventoryManager.SelectedSlotEventArgs e)
   {
-    UpdateSelectionIndicator(e.selectedSlot);
+    for (int i = 0; i < slotUiList.Count; i++)
+    {
+      slotUiList[i].SetSelected(i == e.SelectedSlot);
+    }
   }
 
   private void InventoryManager_OnInventorySlotUpdated(object sender, InventoryManager.InventorySlotEventArgs e)
   {
-    UpdateInventorySlot(e.slotIndex, e.kitchenObjectSo, e.quantity);
-  }
+    if (e.SlotIndex < 0 || e.SlotIndex >= slotUiList.Count) return;
 
-  private void UpdateSelectionIndicator(int selectedSlot)
-  {
-    for (int i = 0; i < InventoryManager.GetInventorySize(); i++)
-    {
-      slotUiList[i].SetSelected(i == selectedSlot);
-    }
-  }
-
-  private void UpdateInventorySlot(int slotIndex, KitchenObjectSo kitchenObjectSo, int quantity)
-  {
-    InventorySlotUi slotItem = slotUiList[slotIndex];
-    slotItem.SetItem(kitchenObjectSo, quantity);
+    slotUiList[e.SlotIndex].SetItem(e.KitchenObjectSo, e.Quantity);
   }
 }

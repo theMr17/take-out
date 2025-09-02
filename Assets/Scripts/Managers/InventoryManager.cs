@@ -5,17 +5,16 @@ public class InventoryManager : MonoBehaviour
 {
   public static InventoryManager Instance { get; private set; }
 
-  [Range(1, 9)]
-  [SerializeField] private static int maxInventorySize = 8;
+  private const int INVENTORY_SLOT_COUNT = 8;
 
   class InventoryItem
   {
-    public KitchenObjectSo kitchenObjectSo;
-    public int Quantity;
+    public KitchenObjectSo KitchenObjectSo { get; }
+    public int Quantity { get; set; }
 
     public InventoryItem(KitchenObjectSo kitchenObjectSo, int quantity)
     {
-      this.kitchenObjectSo = kitchenObjectSo;
+      KitchenObjectSo = kitchenObjectSo;
       Quantity = quantity;
     }
   }
@@ -26,14 +25,15 @@ public class InventoryManager : MonoBehaviour
   public event EventHandler<SelectedSlotEventArgs> OnSlotSelectionChanged;
   public class SelectedSlotEventArgs : EventArgs
   {
-    public int selectedSlot;
+    public int SelectedSlot;
   }
+
   public event EventHandler<InventorySlotEventArgs> OnInventorySlotUpdated;
   public class InventorySlotEventArgs : EventArgs
   {
-    public int slotIndex;
-    public KitchenObjectSo kitchenObjectSo;
-    public int quantity;
+    public int SlotIndex;
+    public KitchenObjectSo KitchenObjectSo;
+    public int Quantity;
   }
 
   private void Awake()
@@ -47,7 +47,7 @@ public class InventoryManager : MonoBehaviour
     Instance = this;
     DontDestroyOnLoad(gameObject);
 
-    inventoryItems = new InventoryItem[maxInventorySize];
+    inventoryItems = new InventoryItem[INVENTORY_SLOT_COUNT];
   }
 
   private void Start()
@@ -72,98 +72,83 @@ public class InventoryManager : MonoBehaviour
 
   private void HandleScroll(int direction)
   {
-    if (direction == 1)
-    {
-      int nextSlot = (selectedSlot + 1) % maxInventorySize;
-      SelectSlot(nextSlot);
-    }
-    else
-    {
-      int prevSlot = (selectedSlot - 1 + maxInventorySize) % maxInventorySize;
-      SelectSlot(prevSlot);
-    }
+    int newSlot = direction == 1
+      ? (selectedSlot + 1) % INVENTORY_SLOT_COUNT
+      : (selectedSlot - 1 + INVENTORY_SLOT_COUNT) % INVENTORY_SLOT_COUNT;
+
+    SelectSlot(newSlot);
   }
 
   private void SelectSlot(int slotIndex)
   {
-    if (slotIndex >= 0 && slotIndex < maxInventorySize)
-    {
-      selectedSlot = slotIndex;
-      OnSlotSelectionChanged?.Invoke(this, new SelectedSlotEventArgs { selectedSlot = selectedSlot });
-      SaveInventory();
-    }
+    if (slotIndex < 0 || slotIndex >= INVENTORY_SLOT_COUNT) return;
+
+    selectedSlot = slotIndex;
+    OnSlotSelectionChanged?.Invoke(this, new SelectedSlotEventArgs { SelectedSlot = selectedSlot });
+    SaveInventory();
   }
 
-  public void TryPickupObject(KitchenObjectSo kitchenObjectSO)
+  public void TryPickupObject(KitchenObjectSo kitchenObjectSo)
   {
-    if (kitchenObjectSO == null)
-    {
-      return;
-    }
-
-    // Check if the selected slot is valid
-    if (selectedSlot < 0 || selectedSlot >= maxInventorySize)
-    {
-      return;
-    }
+    if (kitchenObjectSo == null || selectedSlot < 0 || selectedSlot >= INVENTORY_SLOT_COUNT) return;
 
     InventoryItem slotItem = inventoryItems[selectedSlot];
 
     // Check if the slot is already occupied with the same item
-    if (slotItem != null && slotItem.kitchenObjectSo == kitchenObjectSO)
+    if (slotItem != null && slotItem.KitchenObjectSo == kitchenObjectSo)
     {
       // Check if the slot is full
-      if (slotItem.Quantity >= kitchenObjectSO.maxStackedQuantity)
+      if (slotItem.Quantity >= kitchenObjectSo.maxStackedQuantity)
       {
-        SoundManager.Instance.PlaySound("inventory-interact-error", Vector3.zero);
+        SoundManager.Instance?.PlaySound("inventory-interact-error", Vector3.zero);
         return;
       }
+
       slotItem.Quantity++;
       OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
       {
-        slotIndex = selectedSlot,
-        kitchenObjectSo = kitchenObjectSO,
-        quantity = slotItem.Quantity
+        SlotIndex = selectedSlot,
+        KitchenObjectSo = kitchenObjectSo,
+        Quantity = slotItem.Quantity
       });
 
-      SoundManager.Instance.PlaySound("inventory-interact-success", Vector3.zero);
-
+      SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
       SaveInventory();
     }
     else if (slotItem == null)
     {
       // Create a new inventory item
-      inventoryItems[selectedSlot] = new InventoryItem(kitchenObjectSO, 1);
+      inventoryItems[selectedSlot] = new InventoryItem(kitchenObjectSo, 1);
       OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
       {
-        slotIndex = selectedSlot,
-        kitchenObjectSo = kitchenObjectSO,
-        quantity = 1
+        SlotIndex = selectedSlot,
+        KitchenObjectSo = kitchenObjectSo,
+        Quantity = 1
       });
 
-      SoundManager.Instance.PlaySound("inventory-interact-success", Vector3.zero);
-
+      SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
       SaveInventory();
     }
     else
     {
       // Slot is occupied by a different item
-      SoundManager.Instance.PlaySound("inventory-interact-error", Vector3.zero);
+      SoundManager.Instance?.PlaySound("inventory-interact-error", Vector3.zero);
     }
   }
 
-  public static int GetInventorySize() => maxInventorySize;
+  public static int GetInventorySize() => INVENTORY_SLOT_COUNT;
 
   public InventoryData GetSaveData()
   {
-    InventoryData saveData = new();
+    var saveData = new InventoryData();
+
     foreach (InventoryItem item in inventoryItems)
     {
       if (item != null)
       {
         saveData.slots.Add(new InventorySlotData
         {
-          kitchenObjectId = item.kitchenObjectSo.name, // Using name as ID
+          kitchenObjectId = item.KitchenObjectSo.name,
           quantity = item.Quantity
         });
       }
@@ -172,25 +157,26 @@ public class InventoryManager : MonoBehaviour
         saveData.slots.Add(new InventorySlotData { kitchenObjectId = "", quantity = 0 });
       }
     }
+
     saveData.selectedSlot = selectedSlot;
     return saveData;
   }
 
   public void LoadFromSaveData(InventoryData data)
   {
-    for (int i = 0; i < data.slots.Count && i < inventoryItems.Length; i++)
+    for (int i = 0; i < inventoryItems.Length && i < data.slots.Count; i++)
     {
       var slotData = data.slots[i];
       if (!string.IsNullOrEmpty(slotData.kitchenObjectId))
       {
-        KitchenObjectSo so = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{slotData.kitchenObjectId}");
-        inventoryItems[i] = new InventoryItem(so, slotData.quantity);
+        var kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{slotData.kitchenObjectId}");
+        inventoryItems[i] = new InventoryItem(kitchenObjectSo, slotData.quantity);
 
         OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
         {
-          slotIndex = i,
-          kitchenObjectSo = inventoryItems[i].kitchenObjectSo,
-          quantity = inventoryItems[i].Quantity
+          SlotIndex = i,
+          KitchenObjectSo = kitchenObjectSo,
+          Quantity = slotData.quantity
         });
       }
       else
@@ -198,18 +184,21 @@ public class InventoryManager : MonoBehaviour
         inventoryItems[i] = null;
       }
     }
+
     SelectSlot(data.selectedSlot);
   }
 
   public void SaveInventory()
   {
-    var saveData = GetSaveData();
-    SaveLoadManager.Save(saveData, "inventory");
+    SaveLoadManager.Save(GetSaveData(), "inventory");
   }
 
   public void LoadInventory()
   {
     var saveData = SaveLoadManager.Load<InventoryData>("inventory");
-    LoadFromSaveData(saveData);
+    if (saveData != null)
+    {
+      LoadFromSaveData(saveData);
+    }
   }
 }
