@@ -136,6 +136,35 @@ public class InventoryManager : MonoBehaviour
     }
   }
 
+  public KitchenObjectSo GetOneFromSelectedSlot()
+  {
+    if (selectedSlot < 0 || selectedSlot >= INVENTORY_SLOT_COUNT) return null;
+
+    InventoryItem slotItem = inventoryItems[selectedSlot];
+    if (slotItem != null)
+    {
+      slotItem.Quantity--;
+
+      if (slotItem.Quantity <= 0)
+      {
+        inventoryItems[selectedSlot] = null;
+      }
+
+      OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
+      {
+        SlotIndex = selectedSlot,
+        KitchenObjectSo = inventoryItems[selectedSlot]?.KitchenObjectSo,
+        Quantity = inventoryItems[selectedSlot]?.Quantity ?? 0
+      });
+
+      SaveInventory();
+
+      return slotItem.KitchenObjectSo;
+    }
+
+    return null;
+  }
+
   public static int GetInventorySize() => INVENTORY_SLOT_COUNT;
 
   public InventoryData GetSaveData()
