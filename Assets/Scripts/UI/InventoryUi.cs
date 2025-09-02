@@ -1,31 +1,44 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class InventoryUi : MonoBehaviour
 {
   [SerializeField] private Transform inventorySlotsContainer;
   [SerializeField] private GameObject inventorySlotPrefab;
 
-  private void Start()
+  private List<InventorySlotUi> slotUiList = new();
+
+  private void Awake()
   {
     CreateInventorySlots();
+  }
 
+  private void Start()
+  {
     InventoryManager.Instance.OnSlotSelectionChanged += InventoryManager_OnSlotSelectionChanged;
     InventoryManager.Instance.OnInventorySlotUpdated += InventoryManager_OnInventorySlotUpdated;
   }
 
+  private void OnDestroy()
+  {
+    InventoryManager.Instance.OnSlotSelectionChanged -= InventoryManager_OnSlotSelectionChanged;
+    InventoryManager.Instance.OnInventorySlotUpdated -= InventoryManager_OnInventorySlotUpdated;
+  }
+
   private void CreateInventorySlots()
   {
+    slotUiList.Clear();
     foreach (Transform child in inventorySlotsContainer)
     {
       Destroy(child.gameObject);
     }
 
-    for (int i = 0; i < InventoryManager.Instance.GetInventorySize(); i++)
+    for (int i = 0; i < InventoryManager.GetInventorySize(); i++)
     {
       InventorySlotUi slotItem = Instantiate(inventorySlotPrefab, inventorySlotsContainer).GetComponent<InventorySlotUi>();
       slotItem.SetSelected(false);
       slotItem.ClearSlot();
+      slotUiList.Add(slotItem);
     }
   }
 
@@ -41,25 +54,15 @@ public class InventoryUi : MonoBehaviour
 
   private void UpdateSelectionIndicator(int selectedSlot)
   {
-    GameObject selectedSlotObject = inventorySlotsContainer.GetChild(selectedSlot).gameObject;
-
-    // Highlight the selected slot
-    selectedSlotObject.GetComponent<Image>().color = Color.lightGray;
-    selectedSlotObject.GetComponent<InventorySlotUi>().SetSelected(true);
-
-    // Reset colors for all other slots
-    for (int i = 0; i < inventorySlotsContainer.childCount; i++)
+    for (int i = 0; i < InventoryManager.GetInventorySize(); i++)
     {
-      if (i == selectedSlot) continue;
-
-      inventorySlotsContainer.GetChild(i).GetComponent<Image>().color = Color.white;
-      inventorySlotsContainer.GetChild(i).GetComponent<InventorySlotUi>().SetSelected(false);
+      slotUiList[i].SetSelected(i == selectedSlot);
     }
   }
 
   private void UpdateInventorySlot(int slotIndex, KitchenObjectSo kitchenObjectSo, int quantity)
   {
-    InventorySlotUi slotItem = inventorySlotsContainer.GetChild(slotIndex).GetComponent<InventorySlotUi>();
+    InventorySlotUi slotItem = slotUiList[slotIndex];
     slotItem.SetItem(kitchenObjectSo, quantity);
   }
 }

@@ -8,9 +8,9 @@ public class InventorySlotUi : MonoBehaviour
   [SerializeField] private TextMeshProUGUI quantityText;
   [SerializeField] private GameObject selectedIndicator;
 
-  public void SetItem(KitchenObjectSo kitchenObjectSO, int quantity)
+  public void SetItem(KitchenObjectSo kitchenObjectSo, int quantity)
   {
-    iconImage.sprite = kitchenObjectSO.icon;
+    iconImage.sprite = kitchenObjectSo.icon;
     iconImage.gameObject.SetActive(true);
 
     quantityText.text = quantity.ToString();
@@ -28,6 +28,7 @@ public class InventorySlotUi : MonoBehaviour
 
   public void SetSelected(bool isSelected)
   {
+    GetComponent<Image>().color = isSelected ? Color.lightGray : Color.white;
     selectedIndicator.SetActive(isSelected);
   }
 }

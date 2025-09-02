@@ -6,7 +6,7 @@ public class InventoryManager : MonoBehaviour
   public static InventoryManager Instance { get; private set; }
 
   [Range(1, 9)]
-  [SerializeField] private int maxInventorySize = 6;
+  [SerializeField] private static int maxInventorySize = 8;
 
   class InventoryItem
   {
@@ -21,7 +21,7 @@ public class InventoryManager : MonoBehaviour
   }
 
   private InventoryItem[] inventoryItems;
-  private int selectedSlot = -1;
+  private int selectedSlot = 0;
 
   public event EventHandler<SelectedSlotEventArgs> OnSlotSelectionChanged;
   public class SelectedSlotEventArgs : EventArgs
@@ -38,16 +38,16 @@ public class InventoryManager : MonoBehaviour
 
   private void Awake()
   {
-    Instance = this;
-    inventoryItems = new InventoryItem[maxInventorySize];
-  }
-
-  private void Update()
-  {
-    if (selectedSlot == -1)
+    if (Instance != null && Instance != this)
     {
-      SelectSlot(0);
+      Destroy(gameObject);
+      return;
     }
+
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
+    inventoryItems = new InventoryItem[maxInventorySize];
   }
 
   private void Start()
@@ -57,6 +57,8 @@ public class InventoryManager : MonoBehaviour
       InputManager.Instance.OnSlotKeyPressed += SelectSlot;
       InputManager.Instance.OnScroll += HandleScroll;
     }
+
+    LoadInventory();
   }
 
   private void OnDestroy()
@@ -70,7 +72,7 @@ public class InventoryManager : MonoBehaviour
 
   private void HandleScroll(int direction)
   {
-    if (direction > 0)
+    if (direction == 1)
     {
       int nextSlot = (selectedSlot + 1) % maxInventorySize;
       SelectSlot(nextSlot);
@@ -88,6 +90,7 @@ public class InventoryManager : MonoBehaviour
     {
       selectedSlot = slotIndex;
       OnSlotSelectionChanged?.Invoke(this, new SelectedSlotEventArgs { selectedSlot = selectedSlot });
+      SaveInventory();
     }
   }
 
@@ -124,6 +127,8 @@ public class InventoryManager : MonoBehaviour
       });
 
       SoundManager.Instance.PlaySound("inventory-interact-success", Vector3.zero);
+
+      SaveInventory();
     }
     else if (slotItem == null)
     {
@@ -137,6 +142,8 @@ public class InventoryManager : MonoBehaviour
       });
 
       SoundManager.Instance.PlaySound("inventory-interact-success", Vector3.zero);
+
+      SaveInventory();
     }
     else
     {
@@ -145,5 +152,64 @@ public class InventoryManager : MonoBehaviour
     }
   }
 
-  public int GetInventorySize() => maxInventorySize;
+  public static int GetInventorySize() => maxInventorySize;
+
+  public InventoryData GetSaveData()
+  {
+    InventoryData saveData = new();
+    foreach (InventoryItem item in inventoryItems)
+    {
+      if (item != null)
+      {
+        saveData.slots.Add(new InventorySlotData
+        {
+          kitchenObjectId = item.kitchenObjectSo.name, // Using name as ID
+          quantity = item.Quantity
+        });
+      }
+      else
+      {
+        saveData.slots.Add(new InventorySlotData { kitchenObjectId = "", quantity = 0 });
+      }
+    }
+    saveData.selectedSlot = selectedSlot;
+    return saveData;
+  }
+
+  public void LoadFromSaveData(InventoryData data)
+  {
+    for (int i = 0; i < data.slots.Count && i < inventoryItems.Length; i++)
+    {
+      var slotData = data.slots[i];
+      if (!string.IsNullOrEmpty(slotData.kitchenObjectId))
+      {
+        KitchenObjectSo so = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{slotData.kitchenObjectId}");
+        inventoryItems[i] = new InventoryItem(so, slotData.quantity);
+
+        OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
+        {
+          slotIndex = i,
+          kitchenObjectSo = inventoryItems[i].kitchenObjectSo,
+          quantity = inventoryItems[i].Quantity
+        });
+      }
+      else
+      {
+        inventoryItems[i] = null;
+      }
+    }
+    SelectSlot(data.selectedSlot);
+  }
+
+  public void SaveInventory()
+  {
+    var saveData = GetSaveData();
+    SaveLoadManager.Save(saveData, "inventory");
+  }
+
+  public void LoadInventory()
+  {
+    var saveData = SaveLoadManager.Load<InventoryData>("inventory");
+    LoadFromSaveData(saveData);
+  }
 }
