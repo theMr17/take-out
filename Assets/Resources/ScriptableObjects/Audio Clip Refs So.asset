@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d56b04c8992bd2b47b8fec632e34236b, type: 3}
+  m_Name: Audio Clip Refs So
+  m_EditorClassIdentifier: Assembly-CSharp::AudioClipRefsSo
+  clips:
+  - key: rain
+    clip: {fileID: 8300000, guid: fd91ce09d39cebb4e95eaba02d9aff75, type: 3}
+  - key: place-cup
+    clip: {fileID: 8300000, guid: 03a6960510a70a84a8cca962db015cf0, type: 3}
+  - key: inventory-interact-success
+    clip: {fileID: 8300000, guid: c1ebac6c94892704d82a46f4bbb20b3a, type: 3}
+  - key: inventory-interact-error
+    clip: {fileID: 8300000, guid: c17a8c446c6d2ec4880d007f7db6b3ac, type: 3}
+  - key: fill-coffee-cup
+    clip: {fileID: 8300000, guid: 18fb9a624585fbe4b88afa1e92fb8eab, type: 3}
