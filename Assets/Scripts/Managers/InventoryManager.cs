@@ -88,9 +88,9 @@ public class InventoryManager : MonoBehaviour
     SaveInventory();
   }
 
-  public void TryPickupObject(KitchenObjectSo kitchenObjectSo)
+  public bool TryPickupObject(KitchenObjectSo kitchenObjectSo)
   {
-    if (kitchenObjectSo == null || selectedSlot < 0 || selectedSlot >= INVENTORY_SLOT_COUNT) return;
+    if (kitchenObjectSo == null || selectedSlot < 0 || selectedSlot >= INVENTORY_SLOT_COUNT) return false;
 
     InventoryItem slotItem = inventoryItems[selectedSlot];
 
@@ -101,7 +101,7 @@ public class InventoryManager : MonoBehaviour
       if (slotItem.Quantity >= kitchenObjectSo.maxStackedQuantity)
       {
         SoundManager.Instance?.PlaySound("inventory-interact-error", Vector3.zero);
-        return;
+        return false;
       }
 
       slotItem.Quantity++;
@@ -133,10 +133,20 @@ public class InventoryManager : MonoBehaviour
     {
       // Slot is occupied by a different item
       SoundManager.Instance?.PlaySound("inventory-interact-error", Vector3.zero);
+      return false;
     }
+    return true;
   }
 
-  public KitchenObjectSo GetOneFromSelectedSlot()
+  public KitchenObjectSo GetKitchenObjectSoFromSelectedSlot()
+  {
+    if (selectedSlot < 0 || selectedSlot >= INVENTORY_SLOT_COUNT) return null;
+
+    InventoryItem slotItem = inventoryItems[selectedSlot];
+    return slotItem?.KitchenObjectSo;
+  }
+
+  public KitchenObjectSo TakeOneFromSelectedSlot()
   {
     if (selectedSlot < 0 || selectedSlot >= INVENTORY_SLOT_COUNT) return null;
 

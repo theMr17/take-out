@@ -14,4 +14,10 @@ public class KitchenObject : MonoBehaviour
     KitchenObject kitchenObject = Instantiate(kitchenObjectSO.prefab, kitchenObjectParent.GetKitchenObjectFollowTransform()).GetComponent<KitchenObject>();
     kitchenObjectParent.SetKitchenObject(kitchenObject);
   }
+
+  public static void DestroyKitchenObject(IKitchenObjectParent kitchenObjectParent)
+  {
+    Destroy(kitchenObjectParent.GetKitchenObject().gameObject);
+    kitchenObjectParent.ClearKitchenObject();
+  }
 }

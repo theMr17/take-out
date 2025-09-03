@@ -22,6 +22,11 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
     Debug.LogError("BaseCounter.Interact()");
   }
 
+  public virtual void InteractAlternate()
+  {
+    Debug.LogError("BaseCounter.InteractAlternate()");
+  }
+
   public void ClearKitchenObject()
   {
     kitchenObject = null;
@@ -54,7 +59,15 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
 
   public void OnPointerClick(PointerEventData eventData)
   {
-    Interact();
+    switch (eventData.button)
+    {
+      case PointerEventData.InputButton.Left:
+        Interact();
+        break;
+      case PointerEventData.InputButton.Right:
+        InteractAlternate();
+        break;
+    }
   }
 
   public void OnPointerEnter(PointerEventData eventData)

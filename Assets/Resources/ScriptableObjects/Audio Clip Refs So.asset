@@ -21,3 +21,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c1ebac6c94892704d82a46f4bbb20b3a, type: 3}
   - key: inventory-interact-error
     clip: {fileID: 8300000, guid: c17a8c446c6d2ec4880d007f7db6b3ac, type: 3}
+  - key: fill-coffee-cup
+    clip: {fileID: 8300000, guid: 18fb9a624585fbe4b88afa1e92fb8eab, type: 3}
