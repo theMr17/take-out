@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineData>
+public class CoffeeMachine : BaseMachine<CoffeeMachineData>, IHasProgress
 {
   public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
   public event EventHandler OnFillInteractSuccess;
@@ -13,20 +13,13 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
 
   private bool isLoadNeeded = true;
 
-  private SaveableHelper<CoffeeMachineData> saveHelper;
-
-  public string SaveKey => "coffeeMachine";
-
-  private void Awake()
-  {
-    saveHelper = new SaveableHelper<CoffeeMachineData>(SaveKey, GetSaveData, LoadFromSaveData);
-  }
+  protected override string GetSaveKey() => "coffeeMachine";
 
   private void Update()
   {
     if (isLoadNeeded)
     {
-      saveHelper.Load();
+      Load();
       isLoadNeeded = false;
     }
   }
@@ -36,7 +29,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
     if (HasKitchenObject())
     {
       HandleCupPickup(); // Player takes cup back from machine
-      saveHelper.Save(); // Save after change
+      Save(); // Save after change
       return;
     }
 
@@ -54,7 +47,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
     SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
 
     ResetProgress(); // Start with 0 progress
-    saveHelper.Save(); // Save after placing cup
+    Save(); // Save after placing cup
   }
 
   public override void InteractAlternate()
@@ -82,7 +75,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
       ReplaceWithOutput(recipe.output);
     }
 
-    saveHelper.Save(); // Save after filling
+    Save(); // Save after filling
   }
 
   private void HandleCupPickup()
@@ -135,7 +128,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
   private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
     GetCoffeeRecipeSoWithInput(inputSo) != null;
 
-  public CoffeeMachineData GetSaveData()
+  public override CoffeeMachineData GetSaveData()
   {
     var data = new CoffeeMachineData();
 
@@ -153,7 +146,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
     return data;
   }
 
-  public void LoadFromSaveData(CoffeeMachineData data)
+  public override void LoadFromSaveData(CoffeeMachineData data)
   {
     fillProgress = data.fillProgress;
 

@@ -1,4 +1,4 @@
-public class TrashMachine : BaseMachine
+public class TrashMachine : BaseMachine<EmptyData>
 {
   public override void Interact()
   {
@@ -11,6 +11,5 @@ public class TrashMachine : BaseMachine
     {
       SoundManager.Instance.PlaySound("inventory-interact-success", transform.position);
     }
-
   }
 }

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
+public class InventoryManager : SaveableBehaviour<InventoryData>
 {
   public static InventoryManager Instance { get; private set; }
 
@@ -21,7 +21,6 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
 
   private InventoryItem[] inventoryItems;
   private int selectedSlot = 0;
-  private SaveableHelper<InventoryData> saveHelper;
 
   public event EventHandler<SelectedSlotEventArgs> OnSlotSelectionChanged;
   public class SelectedSlotEventArgs : EventArgs
@@ -37,7 +36,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
     public int Quantity;
   }
 
-  public string SaveKey => "inventory";
+  protected override string GetSaveKey() => "inventory";
 
   private void Awake()
   {
@@ -51,7 +50,6 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
     DontDestroyOnLoad(gameObject);
 
     inventoryItems = new InventoryItem[INVENTORY_SLOT_COUNT];
-    saveHelper = new SaveableHelper<InventoryData>(SaveKey, GetSaveData, LoadFromSaveData);
   }
 
   private void Start()
@@ -62,7 +60,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
       InputManager.Instance.OnScroll += HandleScroll;
     }
 
-    saveHelper.Load();
+    Load();
   }
 
   private void OnDestroy()
@@ -89,7 +87,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
 
     selectedSlot = slotIndex;
     OnSlotSelectionChanged?.Invoke(this, new SelectedSlotEventArgs { SelectedSlot = selectedSlot });
-    saveHelper.Save();
+    Save();
   }
 
   public bool TryPickupObject(KitchenObjectSo kitchenObjectSo)
@@ -117,7 +115,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
       });
 
       SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
-      saveHelper.Save();
+      Save();
     }
     else if (slotItem == null)
     {
@@ -131,7 +129,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
       });
 
       SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
-      saveHelper.Save();
+      Save();
     }
     else
     {
@@ -171,7 +169,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
         Quantity = inventoryItems[selectedSlot]?.Quantity ?? 0
       });
 
-      saveHelper.Save();
+      Save();
 
       return slotItem.KitchenObjectSo;
     }
@@ -181,7 +179,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
 
   public static int GetInventorySize() => INVENTORY_SLOT_COUNT;
 
-  public InventoryData GetSaveData()
+  public override InventoryData GetSaveData()
   {
     var saveData = new InventoryData();
 
@@ -205,7 +203,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
     return saveData;
   }
 
-  public void LoadFromSaveData(InventoryData data)
+  public override void LoadFromSaveData(InventoryData data)
   {
     for (int i = 0; i < inventoryItems.Length && i < data.slots.Count; i++)
     {

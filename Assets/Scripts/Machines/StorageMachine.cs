@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-public class StorageMachine : BaseMachine
+public class StorageMachine : BaseMachine<EmptyData>
 {
   [SerializeField] private KitchenObjectSo kitchenObjectSO;
 
