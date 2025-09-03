@@ -153,6 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrashMachine
   hasSpriteMask: 0
   machineTopPoint: {fileID: 0}
+  machineDisplayName: Trash
 --- !u!114 &4711783255851203869
 MonoBehaviour:
   m_ObjectHideFlags: 0

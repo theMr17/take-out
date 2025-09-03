@@ -10,6 +10,7 @@ public abstract class BaseMachine<MachineSaveData> : SaveableBehaviour<MachineSa
 
   [SerializeField] protected bool hasSpriteMask = false;
   [SerializeField] protected Transform machineTopPoint;
+  [SerializeField] protected string machineDisplayName;
 
   private KitchenObject kitchenObject;
 
@@ -82,6 +83,8 @@ public abstract class BaseMachine<MachineSaveData> : SaveableBehaviour<MachineSa
         ? new Color(1, 1, 1, 0.05f)
         : Color.lightGray;
     }
+
+    MachineSelectionUi.Instance?.SetMachineSelection(machineDisplayName, true);
   }
 
   public void OnPointerExit(PointerEventData eventData)
@@ -92,5 +95,7 @@ public abstract class BaseMachine<MachineSaveData> : SaveableBehaviour<MachineSa
         ? new Color(1, 1, 1, 0f)
         : Color.white;
     }
+
+    MachineSelectionUi.Instance?.SetMachineSelection(machineDisplayName, false);
   }
 }
