@@ -11,11 +11,22 @@ public class CoffeeMachine : BaseMachine, IHasProgress
 
   private int fillProgress;
 
+  private bool isLoadNeeded = true;
+
+  private void Update()
+  {
+    if (isLoadNeeded)
+    {
+      LoadCoffeeMachine();
+    }
+  }
+
   public override void Interact()
   {
     if (HasKitchenObject())
     {
       HandleCupPickup(); // Player takes cup back from machine
+      SaveCoffeeMachine(); // Save after change
       return;
     }
 
@@ -33,6 +44,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
 
     ResetProgress(); // Start with 0 progress
+    SaveCoffeeMachine(); // Save after placing cup
   }
 
   public override void InteractAlternate()
@@ -59,6 +71,8 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     {
       ReplaceWithOutput(recipe.output);
     }
+
+    SaveCoffeeMachine(); // Save after filling
   }
 
   private void HandleCupPickup()
@@ -110,4 +124,61 @@ public class CoffeeMachine : BaseMachine, IHasProgress
 
   private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
     GetCoffeeRecipeSoWithInput(inputSo) != null;
+
+  public CoffeeMachineData GetSaveData()
+  {
+    var data = new CoffeeMachineData();
+
+    if (HasKitchenObject())
+    {
+      data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
+      data.fillProgress = fillProgress;
+    }
+    else
+    {
+      data.kitchenObjectId = "";
+      data.fillProgress = 0;
+    }
+
+    return data;
+  }
+
+  public void LoadFromSaveData(CoffeeMachineData data)
+  {
+    fillProgress = data.fillProgress;
+
+    if (!string.IsNullOrEmpty(data.kitchenObjectId))
+    {
+      var kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{data.kitchenObjectId}");
+      if (kitchenObjectSo != null)
+      {
+        KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
+
+        var recipe = GetCoffeeRecipeSoWithInput(kitchenObjectSo);
+        if (recipe != null)
+        {
+          OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+          {
+            progressNormalized = (float)fillProgress / recipe.fillProgressMax
+          });
+        }
+      }
+    }
+  }
+
+  public void SaveCoffeeMachine()
+  {
+    SaveLoadManager.Save(GetSaveData(), "coffeeMachine");
+  }
+
+  public void LoadCoffeeMachine()
+  {
+    var saveData = SaveLoadManager.Load<CoffeeMachineData>("coffeeMachine");
+    if (saveData != null)
+    {
+      LoadFromSaveData(saveData);
+    }
+
+    isLoadNeeded = false;
+  }
 }
