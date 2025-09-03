@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour
+public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
 {
   public static InventoryManager Instance { get; private set; }
 
@@ -21,6 +21,7 @@ public class InventoryManager : MonoBehaviour
 
   private InventoryItem[] inventoryItems;
   private int selectedSlot = 0;
+  private SaveableHelper<InventoryData> saveHelper;
 
   public event EventHandler<SelectedSlotEventArgs> OnSlotSelectionChanged;
   public class SelectedSlotEventArgs : EventArgs
@@ -48,6 +49,7 @@ public class InventoryManager : MonoBehaviour
     DontDestroyOnLoad(gameObject);
 
     inventoryItems = new InventoryItem[INVENTORY_SLOT_COUNT];
+    saveHelper = new SaveableHelper<InventoryData>(GetSaveData, LoadFromSaveData);
   }
 
   private void Start()
@@ -227,17 +229,6 @@ public class InventoryManager : MonoBehaviour
     SelectSlot(data.selectedSlot);
   }
 
-  public void SaveInventory()
-  {
-    SaveLoadManager.Save(GetSaveData(), "inventory");
-  }
-
-  public void LoadInventory()
-  {
-    var saveData = SaveLoadManager.Load<InventoryData>("inventory");
-    if (saveData != null)
-    {
-      LoadFromSaveData(saveData);
-    }
-  }
+  public void SaveInventory() => saveHelper.Save("inventory");
+  public void LoadInventory() => saveHelper.Load("inventory");
 }

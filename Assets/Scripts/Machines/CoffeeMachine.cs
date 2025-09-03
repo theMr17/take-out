@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class CoffeeMachine : BaseMachine, IHasProgress
+public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineData>
 {
   public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
   public event EventHandler OnFillInteractSuccess;
@@ -13,11 +13,19 @@ public class CoffeeMachine : BaseMachine, IHasProgress
 
   private bool isLoadNeeded = true;
 
+  private SaveableHelper<CoffeeMachineData> saveHelper;
+
+  private void Awake()
+  {
+    saveHelper = new SaveableHelper<CoffeeMachineData>(GetSaveData, LoadFromSaveData);
+  }
+
   private void Update()
   {
     if (isLoadNeeded)
     {
       LoadCoffeeMachine();
+      isLoadNeeded = false;
     }
   }
 
@@ -166,19 +174,6 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     }
   }
 
-  public void SaveCoffeeMachine()
-  {
-    SaveLoadManager.Save(GetSaveData(), "coffeeMachine");
-  }
-
-  public void LoadCoffeeMachine()
-  {
-    var saveData = SaveLoadManager.Load<CoffeeMachineData>("coffeeMachine");
-    if (saveData != null)
-    {
-      LoadFromSaveData(saveData);
-    }
-
-    isLoadNeeded = false;
-  }
+  public void SaveCoffeeMachine() => saveHelper.Save("coffeeMachine");
+  public void LoadCoffeeMachine() => saveHelper.Load("coffeeMachine");
 }
