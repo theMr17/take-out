@@ -7,6 +7,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
   public event EventHandler OnFillInteractSuccess;
 
   [SerializeField] private CoffeeRecipeSo[] coffeeRecipeSoArray;
+  [SerializeField] private ParticleSystem coffeeFillEffect;
 
   private int fillProgress;
 
@@ -94,6 +95,8 @@ public class CoffeeMachine : BaseMachine, IHasProgress
 
     // Notify listeners that a successful fill interaction happened
     OnFillInteractSuccess?.Invoke(this, EventArgs.Empty);
+
+    coffeeFillEffect.Play();
   }
 
   private CoffeeRecipeSo GetCoffeeRecipeSoWithInput(KitchenObjectSo inputSo)
