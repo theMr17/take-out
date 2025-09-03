@@ -7,5 +7,6 @@ public class CounterSceneManager : MonoBehaviour
   private void Start()
   {
     SoundManager.Instance.PlayLoopingSound("rain", _rainSfxTransform.position, false);
+    SoundManager.Instance.PlayLoopingSound("light-flicker", transform.position, false);
   }
 }
