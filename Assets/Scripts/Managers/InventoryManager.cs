@@ -37,6 +37,8 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
     public int Quantity;
   }
 
+  public string SaveKey => "inventory";
+
   private void Awake()
   {
     if (Instance != null && Instance != this)
@@ -49,7 +51,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
     DontDestroyOnLoad(gameObject);
 
     inventoryItems = new InventoryItem[INVENTORY_SLOT_COUNT];
-    saveHelper = new SaveableHelper<InventoryData>(GetSaveData, LoadFromSaveData);
+    saveHelper = new SaveableHelper<InventoryData>(SaveKey, GetSaveData, LoadFromSaveData);
   }
 
   private void Start()
@@ -60,7 +62,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
       InputManager.Instance.OnScroll += HandleScroll;
     }
 
-    LoadInventory();
+    saveHelper.Load();
   }
 
   private void OnDestroy()
@@ -87,7 +89,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
 
     selectedSlot = slotIndex;
     OnSlotSelectionChanged?.Invoke(this, new SelectedSlotEventArgs { SelectedSlot = selectedSlot });
-    SaveInventory();
+    saveHelper.Save();
   }
 
   public bool TryPickupObject(KitchenObjectSo kitchenObjectSo)
@@ -115,7 +117,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
       });
 
       SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
-      SaveInventory();
+      saveHelper.Save();
     }
     else if (slotItem == null)
     {
@@ -129,7 +131,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
       });
 
       SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
-      SaveInventory();
+      saveHelper.Save();
     }
     else
     {
@@ -169,7 +171,7 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
         Quantity = inventoryItems[selectedSlot]?.Quantity ?? 0
       });
 
-      SaveInventory();
+      saveHelper.Save();
 
       return slotItem.KitchenObjectSo;
     }
@@ -228,7 +230,4 @@ public class InventoryManager : MonoBehaviour, ISaveable<InventoryData>
 
     SelectSlot(data.selectedSlot);
   }
-
-  public void SaveInventory() => saveHelper.Save("inventory");
-  public void LoadInventory() => saveHelper.Load("inventory");
 }

@@ -15,16 +15,18 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
 
   private SaveableHelper<CoffeeMachineData> saveHelper;
 
+  public string SaveKey => "coffeeMachine";
+
   private void Awake()
   {
-    saveHelper = new SaveableHelper<CoffeeMachineData>(GetSaveData, LoadFromSaveData);
+    saveHelper = new SaveableHelper<CoffeeMachineData>(SaveKey, GetSaveData, LoadFromSaveData);
   }
 
   private void Update()
   {
     if (isLoadNeeded)
     {
-      LoadCoffeeMachine();
+      saveHelper.Load();
       isLoadNeeded = false;
     }
   }
@@ -34,7 +36,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
     if (HasKitchenObject())
     {
       HandleCupPickup(); // Player takes cup back from machine
-      SaveCoffeeMachine(); // Save after change
+      saveHelper.Save(); // Save after change
       return;
     }
 
@@ -52,7 +54,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
     SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
 
     ResetProgress(); // Start with 0 progress
-    SaveCoffeeMachine(); // Save after placing cup
+    saveHelper.Save(); // Save after placing cup
   }
 
   public override void InteractAlternate()
@@ -80,7 +82,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
       ReplaceWithOutput(recipe.output);
     }
 
-    SaveCoffeeMachine(); // Save after filling
+    saveHelper.Save(); // Save after filling
   }
 
   private void HandleCupPickup()
@@ -173,7 +175,4 @@ public class CoffeeMachine : BaseMachine, IHasProgress, ISaveable<CoffeeMachineD
       }
     }
   }
-
-  public void SaveCoffeeMachine() => saveHelper.Save("coffeeMachine");
-  public void LoadCoffeeMachine() => saveHelper.Load("coffeeMachine");
 }
