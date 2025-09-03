@@ -14,21 +14,24 @@ public class CoffeeMachine : BaseMachine, IHasProgress
   {
     if (HasKitchenObject())
     {
-      HandleCupPickup();
+      HandleCupPickup(); // Player takes cup back from machine
       return;
     }
 
+    // Get currently selected object from inventory
     var selectedObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
     if (selectedObjectSo == null) return;
 
+    // Ensure this object can be used in a recipe
     if (!HasRecipeWithInput(selectedObjectSo)) return;
 
+    // Place the cup in the machine and remove it from inventory
     var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
     KitchenObject.SpawnKitchenObject(takenObject, this);
 
     SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
 
-    ResetProgress();
+    ResetProgress(); // Start with 0 progress
   }
 
   public override void InteractAlternate()
@@ -41,22 +44,20 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
     var recipe = GetCoffeeRecipeSoWithInput(currentObjectSo);
 
-    if (recipe == null)
-    {
-      return;
-    }
+    if (recipe == null) return; // Not a valid recipe for this machine
 
+    // Increase fill progress each interaction
     fillProgress++;
     UpdateProgress(recipe);
 
+    // Play filling sound effect
     SoundManager.Instance?.PlaySound("fill-coffee-cup", machineTopPoint.position);
 
+    // Check if the cup is fully filled
     if (fillProgress >= recipe.fillProgressMax)
     {
       ReplaceWithOutput(recipe.output);
     }
-
-    OnFillInteractSuccess?.Invoke(this, EventArgs.Empty);
   }
 
   private void HandleCupPickup()
@@ -90,6 +91,9 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     {
       progressNormalized = (float)fillProgress / recipe.fillProgressMax
     });
+
+    // Notify listeners that a successful fill interaction happened
+    OnFillInteractSuccess?.Invoke(this, EventArgs.Empty);
   }
 
   private CoffeeRecipeSo GetCoffeeRecipeSoWithInput(KitchenObjectSo inputSo)
