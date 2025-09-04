@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu()]
-public class CoffeeRecipeSo : ScriptableObject
+public class CoffeeRecipeSo : RecipeSo
 {
   public KitchenObjectSo input;
   public KitchenObjectSo output;

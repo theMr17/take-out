@@ -1,6 +1,13 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 public class GameManager : SaveableBehaviour<GameData>
 {
   public static GameManager Instance { get; private set; }
+
+  [SerializeField]
+  private List<NightSo> nightSoList;
+  private int currentNightIndex = 0;
 
   private void Awake()
   {
@@ -15,13 +22,16 @@ public class GameManager : SaveableBehaviour<GameData>
 
   public override GameData GetSaveData()
   {
-    throw new System.NotImplementedException();
+    return new GameData
+    {
+      currentNightIndex = currentNightIndex
+    };
   }
 
   public override void LoadFromSaveData(GameData data)
   {
-    throw new System.NotImplementedException();
+    currentNightIndex = data.currentNightIndex;
   }
 
-  protected override string GetSaveKey() => "gameState";
+  protected override string GetSaveKey() => "game";
 }

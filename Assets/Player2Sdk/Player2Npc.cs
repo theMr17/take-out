@@ -42,27 +42,31 @@ namespace player2_sdk
         public string sender_name;
         public string sender_message;
         [CanBeNull] public string game_state_info;
-            [CanBeNull] public string tts; // Nullable by convention / attribute
+        [CanBeNull] public string tts; // Nullable by convention / attribute
     }
 
     public class Player2Npc : MonoBehaviour
     {
-        [Header("State Config")] [SerializeField]
+        [Header("State Config")]
+        [SerializeField]
         private NpcManager npcManager;
 
-        [Header("NPC Configuration")] [SerializeField]
+        [Header("NPC Configuration")]
+        [SerializeField]
         private string shortName = "Victor";
 
         [SerializeField] private string fullName = "Victor J. Johnson";
+        [TextArea(3, 10)]
         [Tooltip("A description of the NPC, written in first person, used for the LLM to understand the character better.")]
         [SerializeField] private string characterDescription = "I am crazed scientist on the hunt for gold!";
+        [TextArea(3, 10)]
         [Tooltip("The system prompt should be written the third person, describing the NPC's personality and behavior.")]
         [SerializeField] private string systemPrompt = "Victor is a scientist obsessed with finding gold.";
         [Tooltip("The voice ID to use for TTS. Can be found at localhost:4315/v1/tts/voices")]
         [SerializeField] public string voiceId = "01955d76-ed5b-7451-92d6-5ef579d3ed28";
 
 
-        [Header("Events")] [SerializeField] private TMP_InputField inputField;
+        [Header("Events")][SerializeField] private TMP_InputField inputField;
         [SerializeField] private TextMeshProUGUI outputMessage;
 
         [Header("Debugging")]
@@ -125,7 +129,12 @@ namespace player2_sdk
                 short_name = shortName,
                 name = fullName,
                 character_description = characterDescription,
-                system_prompt = systemPrompt,
+                system_prompt = systemPrompt + " Responses should be brief min 50 chars, max 150 chars." +
+                "All NPCs are customers at a late-night roadside food kiosk. They always place an order for food or drink before or during conversation. " +
+                "Their dialogue may include strange, cryptic, or unsettling remarks, " +
+                "but they must remain in-character as customers speaking with the worker behind the counter. " +
+                "Every interaction begins with ordering or referencing food, and their behavior is rooted in being a diner patron, " +
+                "no matter how supernatural or eerie their personality becomes.",
                 commands = npcManager.GetSerializableFunctions(),
                 tts = new TTSInfo
                 {

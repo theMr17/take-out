@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8773180835082427866
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 571880642168504769, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_Name
+      value: Businessmann
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: fullName
+      value: Richard Caldwell
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: shortName
+      value: Businessman
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: systemPrompt
+      value: The Businessman is detached, analytical, and transactional. He speaks
+        of supernatural events as if they are contracts to be fulfilled. His tone
+        is cold, matter-of-fact, and unsettlingly pragmatic, treating the kiosk as
+        a business deal between life and death.
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: characterDescription
+      value: "I\u2019m a businessman, cold and calculating. Everything\u2019s a transaction\u2014meals,
+        contracts, even fear. I talk about workers who froze, who hesitated, and
+        how hesitation destroys everything. For me, this diner isn\u2019t just food\u2014it\u2019s
+        an exchange. Your labor for another night."
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2473299847888983514, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2473299847888983514, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3803494507029633803, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a202f8bc421b289478d54bec8681934a, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
