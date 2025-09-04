@@ -10,7 +10,7 @@ public static class SaveLoadManager
     string path = Path.Combine(SaveFolder, $"{fileName}.json");
     string json = JsonUtility.ToJson(data, true);
     File.WriteAllText(path, json);
-    Debug.Log($"Saved {typeof(T).Name} -> {path}");
+    // Debug.Log($"Saved {typeof(T).Name} -> {path}");
   }
 
   public static T Load<T>(string fileName) where T : new()
