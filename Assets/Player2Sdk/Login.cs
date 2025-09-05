@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine.Networking;
 
 namespace player2_sdk
@@ -250,11 +248,11 @@ namespace player2_sdk
 
             Debug.LogError("Timed out waiting for token (device code flow expired).");
             return null;
-    }
+        }
 
 
 
-    private async Awaitable<bool> TryImmediateWebLogin()
+        private async Awaitable<bool> TryImmediateWebLogin()
         {
             string url = $"http://localhost:4315/v1/login/web/{npcManager.clientId}";
             using var request = UnityWebRequest.PostWwwForm(url, string.Empty);

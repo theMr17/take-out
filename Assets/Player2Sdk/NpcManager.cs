@@ -12,7 +12,6 @@ namespace player2_sdk
     using UnityEngine.Networking;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
-    using UnityEngine.Serialization;
 
     [Serializable]
     public class Function
@@ -153,7 +152,11 @@ namespace player2_sdk
         private void Awake()
         {
             Instance = this;
+
+#if UNITY_EDITOR
             PlayerSettings.insecureHttpOption = InsecureHttpOption.AlwaysAllowed;
+#endif
+
             if (string.IsNullOrEmpty(clientId))
             {
                 Debug.LogError("NpcManager requires a Client ID to be set.", this);
