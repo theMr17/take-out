@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 571880642168504769, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
       propertyPath: m_Name
-      value: Businessmann
+      value: Businessman
       objectReference: {fileID: 0}
     - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
       propertyPath: fullName
@@ -80,26 +80,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2473299847888983514, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3186534495334288125, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
-      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3803494507029633803, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
