@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
+  m_Name: CheeseSlice
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
+  prefab: {fileID: 7622186450495370774, guid: 41fc69afd070de345ad9ba4cb3ec8322, type: 3}
+  icon: {fileID: 8707199833209870444, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
+  objectName: Cheese Slice
+  maxStackedQuantity: 10
