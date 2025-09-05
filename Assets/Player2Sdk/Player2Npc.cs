@@ -87,6 +87,25 @@ namespace player2_sdk
             return customTraceId;
         }
 
+        public void SetNpcManager(NpcManager manager)
+        {
+            npcManager = manager;
+            if (npcManager != null)
+            {
+                npcManager.spawnNpcs.AddListener(async () => { await SpawnNpcAsync(); });
+            }
+        }
+
+        public void SetInputField(TMP_InputField field)
+        {
+            inputField = field;
+            if (inputField != null)
+            {
+                inputField.onEndEdit.AddListener(OnChatMessageSubmitted);
+                inputField.onEndEdit.AddListener(_ => inputField.text = string.Empty);
+            }
+        }
+
         private string _clientID() => npcManager.clientId;
 
         private void Awake()
@@ -192,7 +211,7 @@ namespace player2_sdk
         }
 
 
-        private async Awaitable SendChatMessageAsync(string message)
+        public async Awaitable SendChatMessageAsync(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {

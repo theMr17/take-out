@@ -13,6 +13,10 @@ PrefabInstance:
       value: Truck Driver
       objectReference: {fileID: 0}
     - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: voiceId
+      value: 01955d76-ed5b-748c-8d98-0fb708ef0fbd
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
       propertyPath: fullName
       value: Earl Thompson
       objectReference: {fileID: 0}

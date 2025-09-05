@@ -124,6 +124,7 @@ namespace player2_sdk
         }
 
         public event EventHandler<NpcResponseEventArgs> OnNpcResponseStateChanged;
+        public event EventHandler OnNpcRegistered;
 
         private const string BaseUrl = "https://api.player2.game/v1";
 
@@ -208,7 +209,7 @@ namespace player2_sdk
 
             var onNpcApiResponse = new UnityEvent<NpcApiChatResponse>();
             onNpcApiResponse.AddListener(response => HandleNpcApiResponse(id, response, uiAttached, onNpcResponse, npcObject));
-
+            OnNpcRegistered?.Invoke(this, EventArgs.Empty);
             _responseListener.RegisterNpc(id, onNpcApiResponse);
 
             // Ensure listener is running after registering
