@@ -13,6 +13,18 @@ PrefabInstance:
       value: FrozenFries
       objectReference: {fileID: 0}
     - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -52,10 +64,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2333691416930142702, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -8588940654882519185, guid: 6703b1926662d1f40bc45e080d58b604, type: 3}
+      objectReference: {fileID: 6420274003394788980, guid: 3258eb167b717c84e95922871e93c335, type: 3}
     - target: {fileID: 8884234011378392733, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: kitchenObjectSO
       value: 
