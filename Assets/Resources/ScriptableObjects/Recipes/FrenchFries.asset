@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f343a5346d3ddf4897884666ca554cf, type: 3}
+  m_Name: FrenchFries
+  m_EditorClassIdentifier: Assembly-CSharp::FrenchFryRecipeSo
+  input: {fileID: 11400000, guid: d59846a207d9d08488e62c86a5d2832d, type: 2}
+  output: {fileID: 11400000, guid: a4ca2a1f6db01074cb73160a394b7fab, type: 2}
+  fryProgressMax: 2
