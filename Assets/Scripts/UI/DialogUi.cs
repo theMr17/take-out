@@ -4,24 +4,23 @@ using Unity.AppUI.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class DialogUi : MonoBehaviour
 {
   [SerializeField] private GameObject dialogPanel;
   [SerializeField] private TextMeshProUGUI dialogText;
   [SerializeField] private float typingSpeed = 0.05f;
+  [SerializeField] private float dotAnimationSpeed = 0.5f;
   [SerializeField] private float paddingTop = 3f;
   [SerializeField] private float paddingBottom = 7f;
 
   private Coroutine typingCoroutine;
+  private Coroutine loadingCoroutine;
 
   private void Start()
   {
     dialogPanel.SetActive(false);
-
     UpdateDialogPanelSize();
-
     NpcManager.Instance.OnNpcResponseStateChanged += HandleNpcResponseStateChanged;
   }
 
@@ -38,13 +37,17 @@ public class DialogUi : MonoBehaviour
       StopCoroutine(typingCoroutine);
       typingCoroutine = null;
     }
+    if (loadingCoroutine != null)
+    {
+      StopCoroutine(loadingCoroutine);
+      loadingCoroutine = null;
+    }
 
     switch (e.State)
     {
       case NpcResponseState.Loading:
         dialogPanel.SetActive(true);
-        StartPlayingTypingSound();
-        typingCoroutine = StartCoroutine(TypeText("Thinking..."));
+        loadingCoroutine = StartCoroutine(AnimateThinkingDots());
         break;
 
       case NpcResponseState.Received:
@@ -73,10 +76,22 @@ public class DialogUi : MonoBehaviour
     StopPlayingTypingSound();
   }
 
+  private IEnumerator AnimateThinkingDots()
+  {
+    int dotCount = 0;
+    while (true)
+    {
+      dotCount = (dotCount % 3) + 1;
+      dialogText.text = $"<b>{new string('.', dotCount)}</b>";
+      UpdateDialogPanelSize();
+      yield return new WaitForSeconds(dotAnimationSpeed);
+    }
+  }
+
   private void UpdateDialogPanelSize()
   {
-    dialogPanel.GetComponent<LayoutElement>().preferredHeight =
-      dialogText.preferredHeight + paddingTop + paddingBottom;
+    var layoutElement = dialogPanel.GetComponent<LayoutElement>();
+    layoutElement.preferredHeight = dialogText.preferredHeight + paddingTop + paddingBottom;
   }
 
   private void StartPlayingTypingSound()
