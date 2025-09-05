@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using player2_sdk;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class GameManager : SaveableBehaviour<GameData>
 {
@@ -15,6 +14,13 @@ public class GameManager : SaveableBehaviour<GameData>
   private int currentNightIndex = 0;
   private int currentCustomerIndex = 0;
   private Player2Npc currentCustomer;
+
+  private List<KitchenObjectSo> currentOrderItems = new();
+  public event EventHandler<OnOrderUpdatedArgs> OnOrderUpdated;
+  public class OnOrderUpdatedArgs : EventArgs
+  {
+    public List<KitchenObjectSo> orderItems;
+  }
 
   public event EventHandler<int> OnNightChanged;
   public event EventHandler<OnCustomerChangedArgs> OnCustomerChanged;
@@ -39,6 +45,8 @@ public class GameManager : SaveableBehaviour<GameData>
     LoadNextCustomer();
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
+
+    Load();
   }
 
   public void LoadNextNight()
@@ -83,6 +91,15 @@ public class GameManager : SaveableBehaviour<GameData>
     {
       Debug.LogWarning("No current customer to send message to.");
     }
+
+    PlaceOrder(nightSoList[currentNightIndex].unlockedOrderItems);
+  }
+
+  public void PlaceOrder(List<KitchenObjectSo> orderItems)
+  {
+    currentOrderItems = orderItems;
+    OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
+    Save();
   }
 
   public override GameData GetSaveData()
@@ -90,7 +107,8 @@ public class GameManager : SaveableBehaviour<GameData>
     return new GameData
     {
       currentNightIndex = currentNightIndex,
-      currentCustomerIndex = currentCustomerIndex
+      currentCustomerIndex = currentCustomerIndex,
+      currentOrderItemNames = currentOrderItems.ConvertAll(item => item.name)
     };
   }
 
@@ -98,6 +116,9 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     currentNightIndex = data.currentNightIndex;
     currentCustomerIndex = data.currentCustomerIndex;
+
+    currentOrderItems = data.currentOrderItemNames.ConvertAll(name => Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{name}"));
+    OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
   }
 
   protected override string GetSaveKey() => "game";

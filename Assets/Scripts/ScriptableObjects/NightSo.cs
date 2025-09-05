@@ -4,6 +4,6 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class NightSo : ScriptableObject
 {
-  public List<RecipeSo> unlockedRecipes;
+  public List<KitchenObjectSo> unlockedOrderItems;
   public List<Customer> customers;
 }
