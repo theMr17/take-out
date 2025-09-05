@@ -222,8 +222,6 @@ namespace player2_sdk
 
             _responseListener.RegisterNpc(id, onNpcApiResponse);
 
-            OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Loading));
-
             // Ensure listener is running after registering
             if (!_responseListener.IsListening)
             {
@@ -387,6 +385,11 @@ namespace player2_sdk
                 Debug.Log(
                     $"Response listener status: IsListening={_responseListener.IsListening}");
             }
+        }
+
+        public void TriggerLoadingEvent(string npcId)
+        {
+            OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(npcId, NpcResponseState.Loading));
         }
     }
 

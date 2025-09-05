@@ -262,6 +262,7 @@ namespace player2_sdk
             if (request.result == UnityWebRequest.Result.Success)
             {
                 Debug.Log($"Message sent successfully to NPC {_npcID}");
+                npcManager.TriggerLoadingEvent(_npcID);
             }
             else
             {

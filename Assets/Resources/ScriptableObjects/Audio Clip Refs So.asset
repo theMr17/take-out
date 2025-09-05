@@ -25,3 +25,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 18fb9a624585fbe4b88afa1e92fb8eab, type: 3}
   - key: light-flicker
     clip: {fileID: 8300000, guid: 14047bb3954ccea479253b8bafaf1c04, type: 3}
+  - key: typing
+    clip: {fileID: 8300000, guid: acb5a16ec43d96e46915ab89d066d0aa, type: 3}
