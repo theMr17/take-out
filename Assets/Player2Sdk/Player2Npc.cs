@@ -1,11 +1,14 @@
 namespace player2_sdk
 {
+
+
     using System;
     using System.Collections.Generic;
     using System.Text;
     using JetBrains.Annotations;
     using TMPro;
     using UnityEngine;
+    using UnityEngine.Events;
     using UnityEngine.Networking;
     using Newtonsoft.Json;
 
@@ -168,6 +171,7 @@ namespace player2_sdk
             {
                 _npcID = request.downloadHandler.text.Trim('"');
                 Debug.Log($"NPC spawned successfully with ID: {_npcID}");
+                npcManager.TriggerLoadingEvent(_npcID);
 
                 if (!string.IsNullOrEmpty(_npcID) && npcManager != null)
                 {
@@ -255,7 +259,6 @@ namespace player2_sdk
             if (request.result == UnityWebRequest.Result.Success)
             {
                 Debug.Log($"Message sent successfully to NPC {_npcID}");
-                npcManager.TriggerLoadingEvent(_npcID);
             }
             else
             {

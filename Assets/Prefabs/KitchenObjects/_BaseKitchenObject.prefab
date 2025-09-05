@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2333691416930142702}
   - component: {fileID: 8884234011378392733}
   m_Layer: 0
-  m_Name: Coffee Cup
+  m_Name: _BaseKitchenObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 6d269e4efc1a3e340a00fff82af9ae91, type: 3}
-  m_Color: {r: 0.4716981, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -103,4 +103,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6698065288646d4ca4874d4aa11233c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObject
-  kitchenObjectSO: {fileID: 11400000, guid: 75b37d159a0bbea4ca83f84ec266bee4, type: 2}
+  kitchenObjectSO: {fileID: 0}
