@@ -65,10 +65,31 @@ namespace player2_sdk
         public bool required;
     }
 
+    public enum NpcResponseState
+    {
+        Loading,
+        Received,
+        Failed
+    }
+
+    public class NpcResponseEventArgs : EventArgs
+    {
+        public string NpcId { get; }
+        public NpcResponseState State { get; }
+        public string Message { get; }
+
+        public NpcResponseEventArgs(string npcId, NpcResponseState state, string message = null)
+        {
+            NpcId = npcId;
+            State = state;
+            Message = message;
+        }
+    }
 
 
     public class NpcManager : MonoBehaviour
     {
+        public static NpcManager Instance { get; private set; }
 
         [Header("Config")]
         [SerializeField]
@@ -84,7 +105,7 @@ namespace player2_sdk
 
         private Player2NpcResponseListener _responseListener;
 
-        [Header("Functions")] [SerializeField] public List<Function> functions;
+        [Header("Functions")][SerializeField] public List<Function> functions;
 
 
         [SerializeField]
@@ -120,6 +141,8 @@ namespace player2_sdk
             }
         }
 
+        public event EventHandler<NpcResponseEventArgs> OnNpcResponseStateChanged;
+
         private const string BaseUrl = "https://api.player2.game/v1";
 
         public string GetBaseUrl()
@@ -129,6 +152,7 @@ namespace player2_sdk
 
         private void Awake()
         {
+            Instance = this;
             PlayerSettings.insecureHttpOption = InsecureHttpOption.AlwaysAllowed;
             if (string.IsNullOrEmpty(clientId))
             {
@@ -198,6 +222,8 @@ namespace player2_sdk
 
             _responseListener.RegisterNpc(id, onNpcApiResponse);
 
+            OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Loading));
+
             // Ensure listener is running after registering
             if (!_responseListener.IsListening)
             {
@@ -213,12 +239,14 @@ namespace player2_sdk
                 if (response == null)
                 {
                     Debug.LogWarning($"Received null response object for NPC {id}");
+                    OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Failed, $"Received null response object for NPC {id}"));
                     return;
                 }
 
                 if (npcObject == null)
                 {
                     Debug.LogWarning($"NPC object is null for NPC {id}");
+                    OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Failed, $"NPC object is null for NPC {id}"));
                     return;
                 }
 
@@ -227,7 +255,8 @@ namespace player2_sdk
                     if (uiAttached && onNpcResponse != null)
                     {
                         Debug.Log($"Updating UI for NPC {id}: {response.message}");
-                        onNpcResponse.text = response.message;
+                        OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Received, response.message));
+                        // onNpcResponse.text = response.message;
                     }
                     else
                     {
@@ -270,6 +299,7 @@ namespace player2_sdk
             catch (Exception ex)
             {
                 Debug.LogError($"Unhandled exception processing response for NPC {id}: {ex.Message}");
+                OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Failed, $"Unhandled exception processing response for NPC {id}: {ex.Message}"));
             }
         }
 

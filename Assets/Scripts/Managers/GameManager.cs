@@ -5,8 +5,9 @@ public class GameManager : SaveableBehaviour<GameData>
 {
   public static GameManager Instance { get; private set; }
 
-  [SerializeField]
-  private List<NightSo> nightSoList;
+  [SerializeField] private Transform customerSpawnPoint;
+
+  [SerializeField] private List<NightSo> nightSoList;
   private int currentNightIndex = 0;
 
   private void Awake()
