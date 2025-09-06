@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using player2_sdk;
 using UnityEngine;
 
@@ -85,7 +86,7 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     if (currentCustomer != null)
     {
-      _ = currentCustomer.SendChatMessageAsync("Hello!");
+      _ = currentCustomer.SendChatMessageAsync("Hello! how was your day? say something");
     }
     else
     {
@@ -100,6 +101,45 @@ public class GameManager : SaveableBehaviour<GameData>
     currentOrderItems = orderItems;
     OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
     Save();
+  }
+
+  public string GetCurrentGameStateInfo()
+  {
+    return $"Current Night: {currentNightIndex + 1}." +
+    $" Choose an order from the following available items only: {string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}.";
+  }
+
+  public void HandleFunctionCall(FunctionCall functionCall)
+  {
+    Debug.Log($"Handling function call: {functionCall.name}");
+    Debug.Log($"Handling arguments: {functionCall.arguments}");
+
+    if (functionCall.name == "place-order")
+    {
+      // Access arguments from the JObject
+      if (functionCall.arguments.TryGetValue("orderItems", out JToken orderItemsToken))
+      {
+        List<KitchenObjectSo> orderItems = new();
+        foreach (var item in orderItemsToken)
+        {
+          string itemName = item.ToString();
+          KitchenObjectSo kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{itemName}");
+          if (kitchenObjectSo != null)
+          {
+            orderItems.Add(kitchenObjectSo);
+          }
+          else
+          {
+            Debug.LogWarning($"KitchenObjectSo with name {itemName} not found.");
+          }
+        }
+        PlaceOrder(orderItems);
+      }
+      else
+      {
+        Debug.LogWarning("Function call 'place-order' missing 'orderItems' argument.");
+      }
+    }
   }
 
   public override GameData GetSaveData()

@@ -232,6 +232,7 @@ namespace player2_sdk
                 {
                     sender_name = fullName,
                     sender_message = message,
+                    game_state_info = GameManager.Instance.GetCurrentGameStateInfo(),
                     tts = null
                 };
 
