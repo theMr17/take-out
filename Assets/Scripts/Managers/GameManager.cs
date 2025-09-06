@@ -105,8 +105,9 @@ public class GameManager : SaveableBehaviour<GameData>
 
   public string GetCurrentGameStateInfo()
   {
-    return $"Current Night: {currentNightIndex + 1}." +
-    $" Choose an order from the following available items only: {string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}.";
+    return $"Current Night: {currentNightIndex + 1}."
+    + $"If you want to place and order, Choose an order from the following available items only: {string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}. Placing order is not compulsory"
+    ;
   }
 
   public void HandleFunctionCall(FunctionCall functionCall)
@@ -134,6 +135,9 @@ public class GameManager : SaveableBehaviour<GameData>
           }
         }
         PlaceOrder(orderItems);
+
+        // temporary message, because the customer only places an order and not say anything.
+        _ = currentCustomer.SendChatMessageAsync("Thanks! the order has been placed. how was your day?");
       }
       else
       {
