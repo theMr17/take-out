@@ -9,6 +9,7 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
     [SerializeField] private FrenchFryRecipeSo[] frenchFriesRecipeSoArray;
 
     private int fryProgress;
+    private float fryTimer;
 
     private bool isLoadNeeded = true;
 
@@ -20,6 +21,41 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         {
             Load();
             isLoadNeeded = false;
+        }
+
+        if (HasKitchenObject())
+        {
+            var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
+            var recipe = GetFriesRecipeSoWithInput(currentObjectSo);
+            if (recipe != null && fryProgress < recipe.fryProgressMax)
+            {
+                fryTimer += Time.deltaTime;
+                if (fryTimer >= 1f) // 1 second per progress step, adjust as needed
+                {
+                    fryProgress++;
+                    fryTimer = 0f;
+                    UpdateProgress(recipe);
+                    SoundManager.Instance?.PlaySound("fill-coffee-cup", machineTopPoint.position);
+
+                    // Check for intermediate stage
+                    if (fryProgress == Mathf.RoundToInt(recipe.interMediateFryTime))
+                    {
+                        // Replace with intermediate kitchen object
+                        KitchenObject.DestroyKitchenObject(this);
+                        KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
+                    }
+
+                    if (fryProgress >= recipe.fryProgressMax)
+                    {
+                        ReplaceWithOutput(recipe.output);
+                    }
+                    Save();
+                }
+            }
+        }
+        else
+        {
+            fryTimer = 0f;
         }
     }
 
@@ -49,33 +85,11 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         Save();
     }
 
-    public override void InteractAlternate()
-    {
-        if (!HasKitchenObject())
-        {
-            return;
-        }
-
-        var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
-        var recipe = GetFriesRecipeSoWithInput(currentObjectSo);
-
-        if (recipe == null) return; // Not a valid recipe for this machine
-
-        // Increase fill progress each interaction
-        fryProgress++;
-        UpdateProgress(recipe);
-
-        // Play filling sound effect
-        SoundManager.Instance?.PlaySound("fill-coffee-cup", machineTopPoint.position);
-
-        // Check if the cup is fully filled
-        if (fryProgress >= recipe.fryProgressMax)
-        {
-            ReplaceWithOutput(recipe.output);
-        }
-
-        Save(); // Save after filling
-    }
+    // public override void InteractAlternate()
+    // {
+    //     // No longer needed for frying progress
+    //     // Could be used for other alternate interactions if needed
+    // }
 
     private void HandleFriesPickup()
     {
@@ -117,7 +131,8 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
     {
         foreach (var recipe in frenchFriesRecipeSoArray)
         {
-            if (recipe.input == inputSo) return recipe;
+            if (recipe.input == inputSo || recipe.intermediate == inputSo)
+                return recipe;
         }
         return null;
     }
