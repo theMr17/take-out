@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
   m_Name: Raw Patty
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSo
-  prefab: {fileID: 0}
+  prefab: {fileID: 6802260432787939014, guid: 64153691beb3efe4dbd67c1ced3f012c, type: 3}
   icon: {fileID: 0}
   objectName: 
   maxStackedQuantity: 0
