@@ -43,11 +43,11 @@ public class GameManager : SaveableBehaviour<GameData>
 
   private void Start()
   {
+    Load();
     LoadNextCustomer();
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
 
-    Load();
   }
 
   public void LoadNextNight()
@@ -74,7 +74,7 @@ public class GameManager : SaveableBehaviour<GameData>
     }
 
     OnCustomerChanged?.Invoke(this, new OnCustomerChangedArgs { newCustomer = currentNight.customers[currentCustomerIndex] });
-    currentCustomerIndex++;
+    // currentCustomerIndex++;
   }
 
   public void SetCurrentCustomer(Player2Npc npc)
@@ -92,8 +92,6 @@ public class GameManager : SaveableBehaviour<GameData>
     {
       Debug.LogWarning("No current customer to send message to.");
     }
-
-    PlaceOrder(nightSoList[currentNightIndex].unlockedOrderItems);
   }
 
   public void PlaceOrder(List<KitchenObjectSo> orderItems)

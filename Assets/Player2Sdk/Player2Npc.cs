@@ -190,7 +190,6 @@ namespace player2_sdk
             {
                 _npcID = request.downloadHandler.text.Trim('"');
                 Debug.Log($"NPC spawned successfully with ID: {_npcID}");
-                npcManager.TriggerLoadingEvent(_npcID);
 
                 if (!string.IsNullOrEmpty(_npcID) && npcManager != null)
                 {
@@ -236,6 +235,7 @@ namespace player2_sdk
                     tts = null
                 };
 
+                npcManager.TriggerLoadingEvent(_npcID);
                 await SendChatRequestAsync(chatRequest);
             }
             catch (OperationCanceledException)
