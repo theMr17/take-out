@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class OrdersUi : MonoBehaviour
 {
+  public static OrdersUi Instance { get; private set; }
+
   [SerializeField] private GameObject activeOrdersPanel;
   [SerializeField] private Button togglePanelButton;
 
@@ -14,6 +16,14 @@ public class OrdersUi : MonoBehaviour
 
   private void Awake()
   {
+    if (Instance != null && Instance != this)
+    {
+      Destroy(gameObject);
+      return;
+    }
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
     animator = GetComponent<Animator>();
     togglePanelButton.onClick.AddListener(() =>
     {

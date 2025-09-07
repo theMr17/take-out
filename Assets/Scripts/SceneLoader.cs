@@ -40,4 +40,9 @@ public class SceneLoader : MonoBehaviour
     yield return new WaitForSeconds(transitionDuration);
     SceneManager.LoadScene(targetScene.ToString());
   }
+
+  private Scene GetCurrentScene()
+  {
+    return (Scene)System.Enum.Parse(typeof(Scene), SceneManager.GetActiveScene().name);
+  }
 }

@@ -11,7 +11,14 @@ public class SendMessageInputUi : MonoBehaviour
 
   private void Start()
   {
+    if (Instance != null && Instance != this)
+    {
+      Destroy(gameObject);
+      return;
+    }
     Instance = this;
+    DontDestroyOnLoad(gameObject);
+
     Hide();
 
     NpcManager.Instance.OnNpcResponseStateChanged += NpcManager_OnNpcResponseStateChanged;

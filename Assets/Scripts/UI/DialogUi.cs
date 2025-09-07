@@ -6,6 +6,8 @@ using System.Collections;
 
 public class DialogUi : MonoBehaviour
 {
+  public static DialogUi Instance { get; private set; }
+
   [SerializeField] private GameObject dialogPanel;
   [SerializeField] private TextMeshProUGUI dialogText;
   [SerializeField] private float typingSpeed = 0.05f;
@@ -13,8 +15,16 @@ public class DialogUi : MonoBehaviour
   [SerializeField] private float paddingTop = 3f;
   [SerializeField] private float paddingBottom = 7f;
 
+  [SerializeField] private Sprite dialogBackgroundSprite;
+  [SerializeField] private Sprite dialogBackgroundMirroredSprite;
+
   private Coroutine typingCoroutine;
   private Coroutine loadingCoroutine;
+
+  private void Awake()
+  {
+    Instance = this;
+  }
 
   private void Start()
   {
@@ -101,5 +111,11 @@ public class DialogUi : MonoBehaviour
   private void StopPlayingTypingSound()
   {
     SoundManager.Instance.StopLoopingSound("typing");
+  }
+
+  public void SetDialogBackground(bool mirrored)
+  {
+    var image = dialogPanel.GetComponent<Image>();
+    image.sprite = mirrored ? dialogBackgroundMirroredSprite : dialogBackgroundSprite;
   }
 }

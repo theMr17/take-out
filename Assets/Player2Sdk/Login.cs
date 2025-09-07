@@ -71,6 +71,9 @@ namespace player2_sdk
 
         private void Awake()
         {
+            npcManager = NpcManager.Instance;
+            loginButton.SetActive(!IsLoggedIn());
+
             if (authenticationFinished == null)
             {
                 authenticationFinished = new UnityEvent();
@@ -80,7 +83,6 @@ namespace player2_sdk
                 loginButton.SetActive(false);
             });
             _ = TryImmediateWebLogin();
-
         }
 
 
@@ -104,6 +106,11 @@ namespace player2_sdk
             {
                 Debug.LogException(e);
             }
+        }
+
+        public bool IsLoggedIn()
+        {
+            return npcManager.apiKey != null && npcManager.apiKey.Length > 0;
         }
 
         private async Awaitable<InitiateAuthFlowResponse> StartLogin()
