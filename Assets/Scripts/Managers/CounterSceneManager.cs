@@ -25,6 +25,7 @@ public class CounterSceneManager : MonoBehaviour
       var player2Npc = customer.GetComponent<Player2Npc>();
       player2Npc.SetNpcManager(NpcManager.Instance);
       player2Npc.SetInputField(SendMessageInputUi.Instance.GetInputField());
+      _ = player2Npc.SpawnNpcAsync();
       GameManager.Instance.SetCurrentCustomer(player2Npc);
     }
   }

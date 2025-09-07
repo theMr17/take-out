@@ -90,10 +90,6 @@ namespace player2_sdk
         public void SetNpcManager(NpcManager manager)
         {
             npcManager = manager;
-            if (npcManager != null)
-            {
-                npcManager.spawnNpcs.AddListener(async () => { await SpawnNpcAsync(); });
-            }
         }
 
         public void SetInputField(TMP_InputField field)
@@ -136,9 +132,8 @@ namespace player2_sdk
             _ = SendChatMessageAsync(message);
         }
 
-        private async Awaitable SpawnNpcAsync()
+        public async Awaitable SpawnNpcAsync()
         {
-
             var spawnData = new SpawnNpc
             {
                 short_name = shortName,

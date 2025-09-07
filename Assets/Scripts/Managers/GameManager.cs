@@ -44,15 +44,18 @@ public class GameManager : SaveableBehaviour<GameData>
   private void Start()
   {
     Load();
-    LoadCustomer();
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
-
   }
 
   public void LoadNextNight()
   {
     currentNightIndex++;
+    LoadNight();
+  }
+
+  private void LoadNight()
+  {
     currentCustomerIndex = 0;
     OnNightChanged?.Invoke(this, currentNightIndex);
     LoadCustomer();
@@ -76,7 +79,7 @@ public class GameManager : SaveableBehaviour<GameData>
     NightSo currentNight = nightSoList[currentNightIndex];
     if (currentCustomerIndex >= currentNight.customers.Count)
     {
-      Debug.Log("All customers for the night served!");
+      LoadNextNight();
       return;
     }
 
@@ -183,12 +186,12 @@ public class GameManager : SaveableBehaviour<GameData>
       if (currentOrderItems.Count == 0)
       {
         Debug.Log("Order completed!");
-        _ = currentCustomer.SendChatMessageAsync("The order is complete. Leave now.");
+        _ = currentCustomer.SendChatMessageAsync("The order is complete. Don't order anything else. Just leave now.");
       }
       else
       {
         Debug.Log("Item submitted! Remaining items: " + string.Join(", ", currentOrderItems.ConvertAll(item => item.name)));
-        _ = currentCustomer.SendChatMessageAsync("Thanks! the item has been received. Anything else?");
+        _ = currentCustomer.SendChatMessageAsync($"You received ${selectedKitchenObjectSo.objectName}. Remaining items from your order: " + string.Join(", ", currentOrderItems.ConvertAll(item => item.objectName)));
       }
 
       Save();
@@ -200,6 +203,11 @@ public class GameManager : SaveableBehaviour<GameData>
       _ = currentCustomer.SendChatMessageAsync("I didn't order that. Please give me what I ordered.");
       return false;
     }
+  }
+
+  public void StartGame()
+  {
+    LoadNight();
   }
 
   public override GameData GetSaveData()

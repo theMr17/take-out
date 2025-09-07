@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c58b42c8407046e4aab776129e7c67c4, type: 3}
   m_Name: Night 2
   m_EditorClassIdentifier: Assembly-CSharp::NightSo
-  unlockedRecipes:
-  - {fileID: 11400000, guid: 06497de47d1a14a43a65933de8f02e67, type: 2}
+  unlockedOrderItems:
+  - {fileID: 11400000, guid: 30f5e5c1a782bd249906ba710c953344, type: 2}
+  - {fileID: 11400000, guid: 485ab0bfe38578647967eaa8425f579c, type: 2}
   customers:
   - {fileID: 3150871547260848091, guid: 2d45901a7cc90dd4082fd4ec571025ad, type: 3}
   - {fileID: 3150871547260848091, guid: 9e1a9aaacca9cb74bab2f38cde352455, type: 3}
