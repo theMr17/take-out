@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &4615337849933197049
+--- !u!1001 &2090283304168949455
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1843129536623484598, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_Name
-      value: RawPatty
+      value: CookedSausage
       objectReference: {fileID: 0}
     - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55,11 +55,11 @@ PrefabInstance:
     - target: {fileID: 2333691416930142702, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 8921762988518271137, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
+      objectReference: {fileID: -810003009, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
     - target: {fileID: 8884234011378392733, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: kitchenObjectSO
       value: 
-      objectReference: {fileID: 11400000, guid: 2b7376e42c5c5d049979c3158e221b8b, type: 2}
+      objectReference: {fileID: 11400000, guid: a8161999d4561114d84be36281520378, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

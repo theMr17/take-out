@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
-  m_Name: Sausage
-  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 5767416868478978380, guid: 0c250a6915184ef44bcbece1fa5e4814, type: 3}
-  icon: {fileID: 1294283447, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
-  objectName: Sausage
-  maxStackedQuantity: 10
+  m_Name: Cooked Patty
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSo
+  prefab: {fileID: 3805496840174357782, guid: d5971bae17a0e1d48ad4e67878b004d6, type: 3}
+  icon: {fileID: 65491868, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
+  objectName: Cooked Patty
+  maxStackedQuantity: 5

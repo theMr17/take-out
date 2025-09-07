@@ -1,15 +1,13 @@
 using System;
 using UnityEngine;
 
-public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
+public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
 {
+    private bool isBurnt = false;
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
-    public event EventHandler OnFryInteractSuccess;
-
-    [SerializeField] private GrillRecipeSo[] pattyRecipeSoArray;
-
+    public event EventHandler OnGrillInteractSuccess;
+    [SerializeField] private GrillRecipeSo[] grillRecipeSoArray;
     private float grillProgress;
-
     private bool isLoadNeeded = true;
 
     protected override string GetSaveKey() => "grillMachine";
@@ -24,24 +22,32 @@ public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
 
         if (HasKitchenObject())
         {
+            if (isBurnt) return;
+
             var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
-            var recipe = GetPattyRecipeSoWithInput(currentObjectSo);
-            if (recipe != null && grillProgress < recipe.grillProgressMax)
+            var recipe = GetGrillRecipeSoWithState(currentObjectSo);
+            if (recipe != null)
             {
                 grillProgress += Time.deltaTime;
                 UpdateProgress(recipe);
                 SoundManager.Instance?.PlaySound("grill-sizzle", machineTopPoint.position);
 
-                // Check for intermediate stage
-                if (grillProgress >= recipe.interMediateGrillTime && currentObjectSo != recipe.intermediate)
+                // Transition: input -> intermediate
+                if (currentObjectSo == recipe.input && grillProgress >= recipe.interMediateGrillTime)
                 {
                     KitchenObject.DestroyKitchenObject(this);
                     KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
                 }
-
-                if (grillProgress >= recipe.grillProgressMax)
+                // Transition: intermediate -> output
+                else if (currentObjectSo == recipe.intermediate && grillProgress >= recipe.grillProgressMax)
                 {
                     ReplaceWithOutput(recipe.output);
+                }
+                // Transition: output -> burntOutput
+                else if (currentObjectSo == recipe.output && grillProgress >= recipe.burntGrillTime)
+                {
+                    ReplaceWithOutput(recipe.burntOutput);
+                    isBurnt = true;
                 }
                 Save();
             }
@@ -49,6 +55,7 @@ public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
         else
         {
             grillProgress = 0f;
+            isBurnt = false;
         }
     }
 
@@ -80,7 +87,7 @@ public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
 
     // public override void InteractAlternate()
     // {
-    //     // No longer needed for frying progress
+    //     // No longer needed for grilling progress
     //     // Could be used for other alternate interactions if needed
     // }
 
@@ -103,6 +110,7 @@ public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
     private void ResetProgress()
     {
         grillProgress = 0f;
+        isBurnt = false;
         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
         {
             progressNormalized = 0f
@@ -117,40 +125,43 @@ public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
         });
     }
 
-    private GrillRecipeSo GetPattyRecipeSoWithInput(KitchenObjectSo inputSo)
+    private GrillRecipeSo GetGrillRecipeSoWithState(KitchenObjectSo stateSo)
     {
-        foreach (var recipe in pattyRecipeSoArray)
+        foreach (var recipe in grillRecipeSoArray)
         {
-            if (recipe.input == inputSo || recipe.intermediate == inputSo)
+            if (recipe.input == stateSo || recipe.intermediate == stateSo || recipe.output == stateSo || recipe.burntOutput == stateSo)
                 return recipe;
         }
         return null;
     }
 
     private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
-      GetPattyRecipeSoWithInput(inputSo) != null;
+        GetGrillRecipeSoWithState(inputSo) != null;
 
-    public override FryerMachineData GetSaveData()
+    public override GrillMachineData GetSaveData()
     {
-        var data = new FryerMachineData();
+        var data = new GrillMachineData();
 
         if (HasKitchenObject())
         {
             data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
-            data.fryingProgress = Mathf.RoundToInt(grillProgress); // If you want to save as int
+            data.grillProgress = Mathf.RoundToInt(grillProgress);
+            data.isBurnt = isBurnt;
         }
         else
         {
             data.kitchenObjectId = "";
-            data.fryingProgress = 0;
+            data.grillProgress = 0;
+            data.isBurnt = false;
         }
 
         return data;
     }
 
-    public override void LoadFromSaveData(FryerMachineData data)
+    public override void LoadFromSaveData(GrillMachineData data)
     {
-        grillProgress = data.fryingProgress;
+        grillProgress = data.grillProgress;
+        isBurnt = data.isBurnt;
 
         if (!string.IsNullOrEmpty(data.kitchenObjectId))
         {
@@ -159,7 +170,7 @@ public class GrillMachine : BaseMachine<FryerMachineData>, IHasProgress
             {
                 KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
 
-                var recipe = GetPattyRecipeSoWithInput(kitchenObjectSo);
+                var recipe = GetGrillRecipeSoWithState(kitchenObjectSo);
                 if (recipe != null)
                 {
                     OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs

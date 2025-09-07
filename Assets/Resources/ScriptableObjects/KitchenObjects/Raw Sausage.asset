@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
-  m_Name: CheeseSlice
+  m_Name: Raw Sausage
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 7622186450495370774, guid: 41fc69afd070de345ad9ba4cb3ec8322, type: 3}
-  icon: {fileID: 8707199833209870444, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
-  objectName: Cheese Slice
+  prefab: {fileID: 5767416868478978380, guid: 0c250a6915184ef44bcbece1fa5e4814, type: 3}
+  icon: {fileID: 1294283447, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
+  objectName: Raw Sausage
   maxStackedQuantity: 10
