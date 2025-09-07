@@ -8,6 +8,7 @@ public class OrdersUi : MonoBehaviour
 
   [SerializeField] private Transform ordersContainer;
   [SerializeField] private GameObject orderItemPrefab;
+  [SerializeField] private GameObject noActiveOrdersText;
 
   private Animator animator;
 
@@ -29,7 +30,8 @@ public class OrdersUi : MonoBehaviour
   {
     foreach (Transform child in ordersContainer)
     {
-      Destroy(child.gameObject);
+      if (child != noActiveOrdersText.transform)
+        Destroy(child.gameObject);
     }
 
     foreach (var item in e.orderItems)
@@ -38,5 +40,7 @@ public class OrdersUi : MonoBehaviour
       var orderItemUi = orderItemObj.GetComponent<OrderItemUi>();
       orderItemUi.SetKitchenObject(item);
     }
+
+    noActiveOrdersText.SetActive(e.orderItems.Count == 0);
   }
 }
