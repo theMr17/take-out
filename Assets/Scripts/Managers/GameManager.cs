@@ -44,7 +44,7 @@ public class GameManager : SaveableBehaviour<GameData>
   private void Start()
   {
     Load();
-    LoadNextCustomer();
+    LoadCustomer();
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
 
@@ -55,10 +55,17 @@ public class GameManager : SaveableBehaviour<GameData>
     currentNightIndex++;
     currentCustomerIndex = 0;
     OnNightChanged?.Invoke(this, currentNightIndex);
-    LoadNextCustomer();
+    LoadCustomer();
   }
 
   public void LoadNextCustomer()
+  {
+    currentCustomerIndex++;
+    Save();
+    LoadCustomer();
+  }
+
+  public void LoadCustomer()
   {
     if (currentNightIndex >= nightSoList.Count)
     {
@@ -74,7 +81,6 @@ public class GameManager : SaveableBehaviour<GameData>
     }
 
     OnCustomerChanged?.Invoke(this, new OnCustomerChangedArgs { newCustomer = currentNight.customers[currentCustomerIndex] });
-    // currentCustomerIndex++;
   }
 
   public void SetCurrentCustomer(Player2Npc npc)
@@ -113,34 +119,86 @@ public class GameManager : SaveableBehaviour<GameData>
     Debug.Log($"Handling function call: {functionCall.name}");
     Debug.Log($"Handling arguments: {functionCall.arguments}");
 
-    if (functionCall.name == "place-order")
+    switch (functionCall.name)
     {
-      // Access arguments from the JObject
-      if (functionCall.arguments.TryGetValue("orderItems", out JToken orderItemsToken))
-      {
-        List<KitchenObjectSo> orderItems = new();
-        foreach (var item in orderItemsToken)
-        {
-          string itemName = item.ToString();
-          KitchenObjectSo kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{itemName}");
-          if (kitchenObjectSo != null)
-          {
-            orderItems.Add(kitchenObjectSo);
-          }
-          else
-          {
-            Debug.LogWarning($"KitchenObjectSo with name {itemName} not found.");
-          }
-        }
-        PlaceOrder(orderItems);
+      case "place-order":
+        HandlePlaceOrderFunction(functionCall);
+        break;
+      case "leave":
+        Destroy(currentCustomer.gameObject);
+        LoadNextCustomer();
+        break;
+      default:
+        Debug.LogWarning($"Unknown function call: {functionCall.name}");
+        break;
+    }
+  }
 
-        // temporary message, because the customer only places an order and not say anything.
-        // _ = currentCustomer.SendChatMessageAsync("Thanks! the order has been placed. how was your day?");
+  private void HandlePlaceOrderFunction(FunctionCall functionCall)
+  {
+    Debug.Log($"Handling place-order function call");
+    Debug.Log($"Handling arguments: {functionCall.arguments}");
+
+    // Access arguments from the JObject
+    if (functionCall.arguments.TryGetValue("orderItems", out JToken orderItemsToken))
+    {
+      List<KitchenObjectSo> orderItems = new();
+      foreach (var item in orderItemsToken)
+      {
+        string itemName = item.ToString();
+        KitchenObjectSo kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{itemName}");
+        if (kitchenObjectSo != null)
+        {
+          orderItems.Add(kitchenObjectSo);
+        }
+        else
+        {
+          Debug.LogWarning($"KitchenObjectSo with name {itemName} not found.");
+        }
+      }
+      PlaceOrder(orderItems);
+
+      // temporary message, because the customer only places an order and not say anything.
+      // _ = currentCustomer.SendChatMessageAsync("Thanks! the order has been placed. how was your day?");
+    }
+    else
+    {
+      Debug.LogWarning("Function call 'place-order' missing 'orderItems' argument.");
+    }
+  }
+
+  public bool CanSubmitOrder(KitchenObjectSo kitchenObjectSo)
+  {
+    return currentOrderItems.Contains(kitchenObjectSo);
+  }
+
+  public bool SubmitOrder()
+  {
+    var selectedKitchenObjectSo = InventoryManager.Instance.TakeOneFromSelectedSlot();
+    if (selectedKitchenObjectSo != null && CanSubmitOrder(selectedKitchenObjectSo))
+    {
+      currentOrderItems.Remove(selectedKitchenObjectSo);
+      OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
+
+      if (currentOrderItems.Count == 0)
+      {
+        Debug.Log("Order completed!");
+        _ = currentCustomer.SendChatMessageAsync("The order is complete. Leave now.");
       }
       else
       {
-        Debug.LogWarning("Function call 'place-order' missing 'orderItems' argument.");
+        Debug.Log("Item submitted! Remaining items: " + string.Join(", ", currentOrderItems.ConvertAll(item => item.name)));
+        _ = currentCustomer.SendChatMessageAsync("Thanks! the item has been received. Anything else?");
       }
+
+      Save();
+      return true;
+    }
+    else
+    {
+      Debug.Log("Submitted item is not part of the order.");
+      _ = currentCustomer.SendChatMessageAsync("I didn't order that. Please give me what I ordered.");
+      return false;
     }
   }
 
