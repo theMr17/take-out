@@ -30,23 +30,25 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
             {
                 grillProgress += Time.deltaTime;
                 UpdateProgress(recipe);
-                SoundManager.Instance?.PlaySound("grill-sizzle", machineTopPoint.position);
 
                 // Transition: input -> intermediate
                 if (currentObjectSo == recipe.input && grillProgress >= recipe.interMediateGrillTime)
                 {
                     KitchenObject.DestroyKitchenObject(this);
                     KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
+                    SoundManager.Instance?.PlaySound("grill-sizzle", machineTopPoint.position);
                 }
                 // Transition: intermediate -> output
                 else if (currentObjectSo == recipe.intermediate && grillProgress >= recipe.grillProgressMax)
                 {
                     ReplaceWithOutput(recipe.output);
+                    SoundManager.Instance?.PlaySound("grill-sizzle", machineTopPoint.position);
                 }
                 // Transition: output -> burntOutput
                 else if (currentObjectSo == recipe.output && grillProgress >= recipe.burntGrillTime)
                 {
                     ReplaceWithOutput(recipe.burntOutput);
+                    SoundManager.Instance?.PlaySound("grill-sizzle", machineTopPoint.position);
                     isBurnt = true;
                 }
                 Save();
@@ -73,7 +75,8 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
         if (selectedObjectSo == null) return;
 
         // Ensure this object can be used in a recipe
-        if (!HasRecipeWithInput(selectedObjectSo)) return;
+        var recipe = GetGrillRecipeSoWithState(selectedObjectSo);
+        if (recipe == null || selectedObjectSo != recipe.input) return;
 
         // Place the cup in the machine and remove it from inventory
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
   m_Name: Burnt Patty
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSo
-  prefab: {fileID: 6802260432787939014, guid: 64153691beb3efe4dbd67c1ced3f012c, type: 3}
+  prefab: {fileID: 2702543745538289886, guid: ad43664f64c8e784d8ca2b7f13603f6f, type: 3}
   icon: {fileID: -1569621251, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
   objectName: Burnt Patty
   maxStackedQuantity: 5
