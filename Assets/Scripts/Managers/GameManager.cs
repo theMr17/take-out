@@ -86,7 +86,7 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     if (currentCustomer != null)
     {
-      _ = currentCustomer.SendChatMessageAsync("Hello! how was your day? say something");
+      _ = currentCustomer.SendChatMessageAsync("Hello! how was your day?");
     }
     else
     {
@@ -137,7 +137,7 @@ public class GameManager : SaveableBehaviour<GameData>
         PlaceOrder(orderItems);
 
         // temporary message, because the customer only places an order and not say anything.
-        _ = currentCustomer.SendChatMessageAsync("Thanks! the order has been placed. how was your day?");
+        // _ = currentCustomer.SendChatMessageAsync("Thanks! the order has been placed. how was your day?");
       }
       else
       {
