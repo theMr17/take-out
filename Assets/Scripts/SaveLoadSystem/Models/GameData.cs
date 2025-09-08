@@ -5,5 +5,5 @@ public class GameData
 {
   public int currentNightIndex;
   public int currentCustomerIndex;
-  public List<string> currentOrderItemNames;
+  public List<string> currentOrderItemNames = new();
 }
