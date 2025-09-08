@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Coffee Cup
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
   prefab: {fileID: 6709024396361240704, guid: af719dc7b3b1c5141b54fdb8ddc8248f, type: 3}
-  icon: {fileID: -5110282528694087207, guid: 7343074e9dc53d147a1ede7a1048a6ce, type: 3}
+  icon: {fileID: 21300000, guid: 6d269e4efc1a3e340a00fff82af9ae91, type: 3}
   objectName: Coffee Cup
   maxStackedQuantity: 1

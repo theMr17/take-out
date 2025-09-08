@@ -1,16 +1,16 @@
 using System;
 using UnityEngine;
 
-public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
+public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
 {
     private bool isBurnt = false;
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
-    public event EventHandler OnGrillInteractSuccess;
-    [SerializeField] private GrillRecipeSo[] grillRecipeSoArray;
-    private float grillProgress;
+    public event EventHandler OnOvenInteractSuccess;
+    [SerializeField] private OvenRecipeSo[] ovenRecipeSoArray;
+    private float ovenProgress;
     private bool isLoadNeeded = true;
 
-    protected override string GetSaveKey() => "grillMachine";
+    protected override string GetSaveKey() => "ovenMachine";
 
     private void Update()
     {
@@ -25,26 +25,26 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
             if (isBurnt) return;
 
             var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
-            var recipe = GetGrillRecipeSoWithState(currentObjectSo);
+            var recipe = GetOvenRecipeSoWithState(currentObjectSo);
             if (recipe != null)
             {
-                grillProgress += Time.deltaTime;
+                ovenProgress += Time.deltaTime;
                 UpdateProgress(recipe);
 
-                SoundManager.Instance?.PlayLoopingSound("grill-sizzle", machineTopPoint.position);
+                SoundManager.Instance?.PlayLoopingSound("oven-bake", machineTopPoint.position);
                 // Transition: input -> intermediate
-                if (currentObjectSo == recipe.input && grillProgress >= recipe.interMediateGrillTime)
+                if (currentObjectSo == recipe.input && ovenProgress >= recipe.interMediateBakeTime)
                 {
                     KitchenObject.DestroyKitchenObject(this);
                     KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
                 }
                 // Transition: intermediate -> output
-                else if (currentObjectSo == recipe.intermediate && grillProgress >= recipe.grillProgressMax)
+                else if (currentObjectSo == recipe.intermediate && ovenProgress >= recipe.bakeProgressMax)
                 {
                     ReplaceWithOutput(recipe.output);
                 }
                 // Transition: output -> burntOutput
-                else if (currentObjectSo == recipe.output && grillProgress >= recipe.burntGrillTime)
+                else if (currentObjectSo == recipe.output && ovenProgress >= recipe.burntBakeTime)
                 {
                     ReplaceWithOutput(recipe.burntOutput);
                     isBurnt = true;
@@ -54,7 +54,7 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
         }
         else
         {
-            grillProgress = 0f;
+            ovenProgress = 0f;
             isBurnt = false;
         }
     }
@@ -63,7 +63,7 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
     {
         if (HasKitchenObject())
         {
-            HandleFriesPickup();
+            HandleOvenPickup();
             Save(); // Save after change
             return;
         }
@@ -73,14 +73,14 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
         if (selectedObjectSo == null) return;
 
         // Ensure this object can be used in a recipe
-        var recipe = GetGrillRecipeSoWithState(selectedObjectSo);
+        var recipe = GetOvenRecipeSoWithState(selectedObjectSo);
         if (recipe == null || selectedObjectSo != recipe.input) return;
 
-        // Place the cup in the machine and remove it from inventory
+        // Place the item in the oven and remove it from inventory
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
         KitchenObject.SpawnKitchenObject(takenObject, this);
 
-        SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
+        SoundManager.Instance.PlaySound("place-pan", machineTopPoint.position);
 
         ResetProgress();
         Save();
@@ -88,11 +88,11 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
 
     // public override void InteractAlternate()
     // {
-    //     // No longer needed for grilling progress
+    //     // No longer needed for oven progress
     //     // Could be used for other alternate interactions if needed
     // }
 
-    private void HandleFriesPickup()
+    private void HandleOvenPickup()
     {
         var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
 
@@ -110,7 +110,7 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
 
     private void ResetProgress()
     {
-        grillProgress = 0f;
+        ovenProgress = 0f;
         isBurnt = false;
         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
         {
@@ -118,17 +118,17 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
         });
     }
 
-    private void UpdateProgress(GrillRecipeSo recipe)
+    private void UpdateProgress(OvenRecipeSo recipe)
     {
         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
         {
-            progressNormalized = grillProgress / recipe.grillProgressMax
+            progressNormalized = ovenProgress / recipe.bakeProgressMax
         });
     }
 
-    private GrillRecipeSo GetGrillRecipeSoWithState(KitchenObjectSo stateSo)
+    private OvenRecipeSo GetOvenRecipeSoWithState(KitchenObjectSo stateSo)
     {
-        foreach (var recipe in grillRecipeSoArray)
+        foreach (var recipe in ovenRecipeSoArray)
         {
             if (recipe.input == stateSo || recipe.intermediate == stateSo || recipe.output == stateSo || recipe.burntOutput == stateSo)
                 return recipe;
@@ -137,31 +137,31 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
     }
 
     private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
-        GetGrillRecipeSoWithState(inputSo) != null;
+        GetOvenRecipeSoWithState(inputSo) != null;
 
-    public override GrillMachineData GetSaveData()
+    public override OvenMachineData GetSaveData()
     {
-        var data = new GrillMachineData();
+        var data = new OvenMachineData();
 
         if (HasKitchenObject())
         {
             data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
-            data.grillProgress = Mathf.RoundToInt(grillProgress);
+            data.ovenProgress = Mathf.RoundToInt(ovenProgress);
             data.isBurnt = isBurnt;
         }
         else
         {
             data.kitchenObjectId = "";
-            data.grillProgress = 0;
+            data.ovenProgress = 0;
             data.isBurnt = false;
         }
 
         return data;
     }
 
-    public override void LoadFromSaveData(GrillMachineData data)
+    public override void LoadFromSaveData(OvenMachineData data)
     {
-        grillProgress = data.grillProgress;
+        ovenProgress = data.ovenProgress;
         isBurnt = data.isBurnt;
 
         if (!string.IsNullOrEmpty(data.kitchenObjectId))
@@ -171,12 +171,12 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
             {
                 KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
 
-                var recipe = GetGrillRecipeSoWithState(kitchenObjectSo);
+                var recipe = GetOvenRecipeSoWithState(kitchenObjectSo);
                 if (recipe != null)
                 {
                     OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
                     {
-                        progressNormalized = grillProgress / recipe.grillProgressMax
+                        progressNormalized = ovenProgress / recipe.bakeProgressMax
                     });
                 }
             }

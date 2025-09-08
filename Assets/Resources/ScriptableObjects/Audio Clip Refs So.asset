@@ -28,4 +28,4 @@ MonoBehaviour:
   - key: typing
     clip: {fileID: 8300000, guid: acb5a16ec43d96e46915ab89d066d0aa, type: 3}
   - key: grill-sizzle
-    clip: {fileID: 8300000, guid: c461a69f5dc6d19409399e3ecc4ea5e5, type: 3}
+    clip: {fileID: 8300000, guid: f4f59c13adf31134693d9667bb53f214, type: 3}
