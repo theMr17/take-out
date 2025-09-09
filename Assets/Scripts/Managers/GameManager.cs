@@ -16,6 +16,9 @@ public class GameManager : SaveableBehaviour<GameData>
   private int currentCustomerIndex = 0;
   private Player2Npc currentCustomer;
 
+  public int totalLives = 5;
+  public int remainingLives = 3;
+
   private List<KitchenObjectSo> currentOrderItems = new();
   public event EventHandler<OnOrderUpdatedArgs> OnOrderUpdated;
   public class OnOrderUpdatedArgs : EventArgs
@@ -28,6 +31,11 @@ public class GameManager : SaveableBehaviour<GameData>
   public class OnCustomerChangedArgs : EventArgs
   {
     public Customer newCustomer;
+  }
+  public event EventHandler<OnLivesChangeArgs> OnLivesChanged;
+  public class OnLivesChangeArgs : EventArgs
+  {
+    public int remainingLives;
   }
 
   private void Awake()
@@ -44,6 +52,8 @@ public class GameManager : SaveableBehaviour<GameData>
   private void Start()
   {
     Load();
+
+    OnLivesChanged?.Invoke(this, new OnLivesChangeArgs { remainingLives = remainingLives });
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
   }
@@ -232,7 +242,8 @@ public class GameManager : SaveableBehaviour<GameData>
     {
       currentNightIndex = currentNightIndex,
       currentCustomerIndex = currentCustomerIndex,
-      currentOrderItemNames = currentOrderItems.ConvertAll(item => item.name)
+      currentOrderItemNames = currentOrderItems.ConvertAll(item => item.name),
+      remainingLives = remainingLives
     };
   }
 
@@ -243,6 +254,8 @@ public class GameManager : SaveableBehaviour<GameData>
 
     currentOrderItems = data.currentOrderItemNames.ConvertAll(name => Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{name}"));
     OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
+
+    remainingLives = data.remainingLives;
   }
 
   protected override string GetSaveKey() => "game";
