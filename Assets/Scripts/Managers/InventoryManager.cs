@@ -276,4 +276,9 @@ public class InventoryManager : SaveableBehaviour<InventoryData>
 
     SelectSlot(data.selectedSlot);
   }
+
+  public int GetSelectedSlotIndex()
+  {
+    return selectedSlot;
+  }
 }
