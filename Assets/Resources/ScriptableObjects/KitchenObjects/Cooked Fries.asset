@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
+  m_Name: Cooked Fries
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
+  prefab: {fileID: 4698912973923253624, guid: 01178fb7ca61a9544888141f1ab13631, type: 3}
+  icon: {fileID: 6810912693800282038, guid: 6703b1926662d1f40bc45e080d58b604, type: 3}
+  objectName: Cooked Fries
+  maxStackedQuantity: 1

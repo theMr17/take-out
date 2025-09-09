@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c58b42c8407046e4aab776129e7c67c4, type: 3}
+  m_Name: Night 1
+  m_EditorClassIdentifier: Assembly-CSharp::NightSo
+  unlockedOrderItems:
+  - {fileID: 11400000, guid: 30f5e5c1a782bd249906ba710c953344, type: 2}
+  - {fileID: 11400000, guid: 485ab0bfe38578647967eaa8425f579c, type: 2}
+  - {fileID: 11400000, guid: 75b37d159a0bbea4ca83f84ec266bee4, type: 2}
+  customers:
+  - {fileID: 3150871547260848091, guid: 9754afa90958d9041984fc693b4f60f8, type: 3}
+  - {fileID: 6400702101600475539, guid: c9b486787a8fc5e4bac4e99484a3ab8f, type: 3}

@@ -2,50 +2,40 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public abstract class BaseMachine<MachineSaveData> : SaveableBehaviour<MachineSaveData>,
+    IKitchenObjectParent, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    where MachineSaveData : class, new()
 {
   public static event EventHandler OnAnyObjectPlacedHere;
+
+  [SerializeField] protected bool hasSpriteMask = false;
+  [SerializeField] protected Transform machineTopPoint;
+  [SerializeField] protected string machineDisplayName;
+
+  private KitchenObject kitchenObject;
 
   public static void ResetStaticData()
   {
     OnAnyObjectPlacedHere = null;
   }
 
-  [SerializeField] protected bool hasSpriteMask = false;
-
-  [SerializeField] protected Transform machineTopPoint;
-
-  private KitchenObject kitchenObject;
-
   public virtual void Interact()
   {
-    Debug.LogError("BaseCounter.Interact()");
+    Debug.LogError("BaseMachine.Interact() not overridden.");
   }
 
   public virtual void InteractAlternate()
   {
-    Debug.LogError("BaseCounter.InteractAlternate()");
+    Debug.LogError("BaseMachine.InteractAlternate() not overridden.");
   }
 
-  public void ClearKitchenObject()
-  {
-    kitchenObject = null;
-  }
+  public void ClearKitchenObject() => kitchenObject = null;
 
-  public KitchenObject GetKitchenObject()
-  {
-    return kitchenObject;
-  }
+  public KitchenObject GetKitchenObject() => kitchenObject;
 
-  public Transform GetKitchenObjectFollowTransform()
-  {
-    return machineTopPoint;
-  }
+  public Transform GetKitchenObjectFollowTransform() => machineTopPoint;
 
-  public bool HasKitchenObject()
-  {
-    return kitchenObject != null;
-  }
+  public bool HasKitchenObject() => kitchenObject != null;
 
   public void SetKitchenObject(KitchenObject kitchenObject)
   {
@@ -55,6 +45,21 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
     {
       OnAnyObjectPlacedHere?.Invoke(this, EventArgs.Empty);
     }
+  }
+
+  protected override string GetSaveKey()
+  {
+    throw new NotImplementedException();
+  }
+
+  public override MachineSaveData GetSaveData()
+  {
+    throw new NotImplementedException();
+  }
+
+  public override void LoadFromSaveData(MachineSaveData data)
+  {
+    throw new NotImplementedException();
   }
 
   public void OnPointerClick(PointerEventData eventData)
@@ -74,29 +79,23 @@ public class BaseMachine : MonoBehaviour, IKitchenObjectParent, IPointerClickHan
   {
     if (TryGetComponent(out SpriteRenderer spriteRenderer))
     {
-      if (hasSpriteMask)
-      {
-        spriteRenderer.color = new Color(1, 1, 1, 0.05f);
-      }
-      else
-      {
-        spriteRenderer.color = Color.lightGray;
-      }
+      spriteRenderer.color = hasSpriteMask
+        ? new Color(1, 1, 1, 0.05f)
+        : Color.lightGray;
     }
+
+    MachineSelectionUi.Instance?.SetMachineSelection(machineDisplayName, true);
   }
 
   public void OnPointerExit(PointerEventData eventData)
   {
     if (TryGetComponent(out SpriteRenderer spriteRenderer))
     {
-      if (hasSpriteMask)
-      {
-        spriteRenderer.color = new Color(1, 1, 1, 0);
-      }
-      else
-      {
-        spriteRenderer.color = Color.white;
-      }
+      spriteRenderer.color = hasSpriteMask
+        ? new Color(1, 1, 1, 0f)
+        : Color.white;
     }
+
+    MachineSelectionUi.Instance?.SetMachineSelection(machineDisplayName, false);
   }
 }

@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8773180835082427866
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 571880642168504769, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_Name
+      value: Hooded Stranger
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: fullName
+      value: Hooded Stranger
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: shortName
+      value: Stranger
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: systemPrompt
+      value: The Hooded Stranger is silent, cryptic, and menacing. They speak in
+        whispers, demanding unusual and unsettling orders. They reference the last
+        worker directly, savoring fear as flavor. Their presence is threatening,
+        their words sparse and loaded with menace.
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200660650145078164, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: characterDescription
+      value: "I\u2019m a shadow in a hood. I don\u2019t waste words. I ask for things
+        no one else would\u2014raw sausage, meat that still feels alive. I remember
+        the last worker\u2019s trembling hands, the taste of their fear. I return
+        because the diner calls, and I always answer."
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400835205944206667, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2473299847888983514, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2473299847888983514, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3803494507029633803, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 685a6b51ed40ccc498548cac1d1f946f, type: 3}
+    - target: {fileID: 5716554239353072802, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5716554239353072802, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5716554239353072802, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5716554239353072802, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5716554239353072802, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5716554239353072802, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
   m_Name: Empty Cup
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+  prefab: {fileID: 6306036592387107739, guid: 608eadc7c9ae6ff439d9622803dc6f21, type: 3}
   icon: {fileID: 21300000, guid: 6d269e4efc1a3e340a00fff82af9ae91, type: 3}
   objectName: Empty Cup
   maxStackedQuantity: 10

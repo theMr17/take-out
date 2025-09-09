@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
+  m_Name: Raw Sausage
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
+  prefab: {fileID: 5767416868478978380, guid: 0c250a6915184ef44bcbece1fa5e4814, type: 3}
+  icon: {fileID: 1294283447, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
+  objectName: Raw Sausage
+  maxStackedQuantity: 10

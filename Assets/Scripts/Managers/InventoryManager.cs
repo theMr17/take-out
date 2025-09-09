@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class InventoryManager : MonoBehaviour
+public class InventoryManager : SaveableBehaviour<InventoryData>
 {
   public static InventoryManager Instance { get; private set; }
 
@@ -36,6 +36,8 @@ public class InventoryManager : MonoBehaviour
     public int Quantity;
   }
 
+  protected override string GetSaveKey() => "inventory";
+
   private void Awake()
   {
     if (Instance != null && Instance != this)
@@ -58,7 +60,7 @@ public class InventoryManager : MonoBehaviour
       InputManager.Instance.OnScroll += HandleScroll;
     }
 
-    LoadInventory();
+    Load();
   }
 
   private void OnDestroy()
@@ -85,7 +87,7 @@ public class InventoryManager : MonoBehaviour
 
     selectedSlot = slotIndex;
     OnSlotSelectionChanged?.Invoke(this, new SelectedSlotEventArgs { SelectedSlot = selectedSlot });
-    SaveInventory();
+    Save();
   }
 
   public bool TryPickupObject(KitchenObjectSo kitchenObjectSo)
@@ -113,7 +115,7 @@ public class InventoryManager : MonoBehaviour
       });
 
       SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
-      SaveInventory();
+      Save();
     }
     else if (slotItem == null)
     {
@@ -127,7 +129,7 @@ public class InventoryManager : MonoBehaviour
       });
 
       SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
-      SaveInventory();
+      Save();
     }
     else
     {
@@ -167,7 +169,7 @@ public class InventoryManager : MonoBehaviour
         Quantity = inventoryItems[selectedSlot]?.Quantity ?? 0
       });
 
-      SaveInventory();
+      Save();
 
       return slotItem.KitchenObjectSo;
     }
@@ -177,7 +179,7 @@ public class InventoryManager : MonoBehaviour
 
   public static int GetInventorySize() => INVENTORY_SLOT_COUNT;
 
-  public InventoryData GetSaveData()
+  public override InventoryData GetSaveData()
   {
     var saveData = new InventoryData();
 
@@ -201,7 +203,7 @@ public class InventoryManager : MonoBehaviour
     return saveData;
   }
 
-  public void LoadFromSaveData(InventoryData data)
+  public override void LoadFromSaveData(InventoryData data)
   {
     for (int i = 0; i < inventoryItems.Length && i < data.slots.Count; i++)
     {
@@ -225,19 +227,5 @@ public class InventoryManager : MonoBehaviour
     }
 
     SelectSlot(data.selectedSlot);
-  }
-
-  public void SaveInventory()
-  {
-    SaveLoadManager.Save(GetSaveData(), "inventory");
-  }
-
-  public void LoadInventory()
-  {
-    var saveData = SaveLoadManager.Load<InventoryData>("inventory");
-    if (saveData != null)
-    {
-      LoadFromSaveData(saveData);
-    }
   }
 }

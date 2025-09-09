@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class CoffeeMachine : BaseMachine, IHasProgress
+public class CoffeeMachine : BaseMachine<CoffeeMachineData>, IHasProgress
 {
   public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
   public event EventHandler OnFillInteractSuccess;
@@ -13,11 +13,14 @@ public class CoffeeMachine : BaseMachine, IHasProgress
 
   private bool isLoadNeeded = true;
 
+  protected override string GetSaveKey() => "coffeeMachine";
+
   private void Update()
   {
     if (isLoadNeeded)
     {
-      LoadCoffeeMachine();
+      Load();
+      isLoadNeeded = false;
     }
   }
 
@@ -26,7 +29,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     if (HasKitchenObject())
     {
       HandleCupPickup(); // Player takes cup back from machine
-      SaveCoffeeMachine(); // Save after change
+      Save(); // Save after change
       return;
     }
 
@@ -44,7 +47,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
 
     ResetProgress(); // Start with 0 progress
-    SaveCoffeeMachine(); // Save after placing cup
+    Save(); // Save after placing cup
   }
 
   public override void InteractAlternate()
@@ -72,7 +75,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
       ReplaceWithOutput(recipe.output);
     }
 
-    SaveCoffeeMachine(); // Save after filling
+    Save(); // Save after filling
   }
 
   private void HandleCupPickup()
@@ -125,7 +128,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
   private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
     GetCoffeeRecipeSoWithInput(inputSo) != null;
 
-  public CoffeeMachineData GetSaveData()
+  public override CoffeeMachineData GetSaveData()
   {
     var data = new CoffeeMachineData();
 
@@ -143,7 +146,7 @@ public class CoffeeMachine : BaseMachine, IHasProgress
     return data;
   }
 
-  public void LoadFromSaveData(CoffeeMachineData data)
+  public override void LoadFromSaveData(CoffeeMachineData data)
   {
     fillProgress = data.fillProgress;
 
@@ -164,21 +167,5 @@ public class CoffeeMachine : BaseMachine, IHasProgress
         }
       }
     }
-  }
-
-  public void SaveCoffeeMachine()
-  {
-    SaveLoadManager.Save(GetSaveData(), "coffeeMachine");
-  }
-
-  public void LoadCoffeeMachine()
-  {
-    var saveData = SaveLoadManager.Load<CoffeeMachineData>("coffeeMachine");
-    if (saveData != null)
-    {
-      LoadFromSaveData(saveData);
-    }
-
-    isLoadNeeded = false;
   }
 }
