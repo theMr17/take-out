@@ -90,3 +90,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeartUi
   heartFull: {fileID: -4906168767149581727, guid: fe18caf48b6b2524892e3d86698e0267, type: 3}
   heartEmpty: {fileID: -6750032056248569916, guid: fe18caf48b6b2524892e3d86698e0267, type: 3}
+  heartHalf: {fileID: 21300000, guid: 422429298bac1794c8e7ef0986502099, type: 3}

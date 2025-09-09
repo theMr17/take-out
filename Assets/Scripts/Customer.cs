@@ -5,11 +5,7 @@ public class Customer : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 {
   public void OnPointerClick(PointerEventData eventData)
   {
-    var selectedKitchenObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
-    if (GameManager.Instance.CanSubmitOrder(selectedKitchenObjectSo))
-    {
-      GameManager.Instance.SubmitOrder();
-    }
+    GameManager.Instance.SubmitOrder();
   }
 
   public void OnPointerEnter(PointerEventData eventData)

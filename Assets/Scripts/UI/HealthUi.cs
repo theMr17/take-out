@@ -47,12 +47,21 @@ public class HealthUi : MonoBehaviour
     }
   }
 
-  public void UpdateHealth(int currentHealth)
+  public void UpdateHealth(float currentHealth)
   {
-    Debug.Log($"Updating health UI: {currentHealth} hearts");
     for (int i = 0; i < heartUiList.Count; i++)
     {
       heartUiList[i].SetHeart(i < currentHealth);
+    }
+
+    // check if the currentHealth has decimal parts then set half heart for next heart
+    if (currentHealth % 1 != 0)
+    {
+      int nextHeartIndex = Mathf.FloorToInt(currentHealth);
+      if (nextHeartIndex < heartUiList.Count)
+      {
+        heartUiList[nextHeartIndex].SetHalfHeart();
+      }
     }
   }
 }

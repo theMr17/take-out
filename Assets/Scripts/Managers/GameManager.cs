@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using player2_sdk;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class GameManager : SaveableBehaviour<GameData>
 {
@@ -17,7 +18,7 @@ public class GameManager : SaveableBehaviour<GameData>
   private Player2Npc currentCustomer;
 
   public int totalLives = 5;
-  public int remainingLives = 3;
+  public float remainingLives = 3.5f;
 
   private List<KitchenObjectSo> currentOrderItems = new();
   public event EventHandler<OnOrderUpdatedArgs> OnOrderUpdated;
@@ -35,7 +36,7 @@ public class GameManager : SaveableBehaviour<GameData>
   public event EventHandler<OnLivesChangeArgs> OnLivesChanged;
   public class OnLivesChangeArgs : EventArgs
   {
-    public int remainingLives;
+    public float remainingLives;
   }
 
   private void Awake()
@@ -151,6 +152,9 @@ public class GameManager : SaveableBehaviour<GameData>
         Destroy(currentCustomer.gameObject);
         LoadNextCustomer();
         break;
+      case "return-wrong-item":
+        HandleReturnWrongItemFunction(functionCall);
+        break;
       default:
         Debug.LogWarning($"Unknown function call: {functionCall.name}");
         break;
@@ -187,7 +191,32 @@ public class GameManager : SaveableBehaviour<GameData>
     }
   }
 
-  public bool CanSubmitOrder(KitchenObjectSo kitchenObjectSo)
+  private void HandleReturnWrongItemFunction(FunctionCall functionCall)
+  {
+    Debug.Log($"Handling return-wrong-item function call");
+    Debug.Log($"Handling arguments: {functionCall.arguments}");
+
+    if (functionCall.arguments.TryGetValue("kitchenObjectSo", out JToken kitchenObjectSoToken))
+    {
+      string itemName = kitchenObjectSoToken.ToString();
+      KitchenObjectSo kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{itemName}");
+      if (kitchenObjectSo != null)
+      {
+        InventoryManager.Instance.TryAddToInventory(kitchenObjectSo);
+        _ = currentCustomer.SendChatMessageAsync($"You returned ${kitchenObjectSo.objectName}. Thank you for returning the wrong item. Some people just take them away.");
+      }
+      else
+      {
+        Debug.LogWarning($"KitchenObjectSo with name {itemName} not found.");
+      }
+    }
+    else
+    {
+      Debug.LogWarning("Function call 'return-wrong-item' missing 'kitchenObjectSo' argument.");
+    }
+  }
+
+  public bool IsItemOrdered(KitchenObjectSo kitchenObjectSo)
   {
     return currentOrderItems.Contains(kitchenObjectSo);
   }
@@ -195,8 +224,15 @@ public class GameManager : SaveableBehaviour<GameData>
   public bool SubmitOrder()
   {
     var selectedKitchenObjectSo = InventoryManager.Instance.TakeOneFromSelectedSlot();
-    if (selectedKitchenObjectSo != null && CanSubmitOrder(selectedKitchenObjectSo))
+    if (selectedKitchenObjectSo != null)
     {
+      if (!IsItemOrdered(selectedKitchenObjectSo))
+      {
+        _ = currentCustomer.SendChatMessageAsync($"You received ${selectedKitchenObjectSo.objectName}. You did not order that. You can return it to the customer and say something and keep it.");
+        DecreaseLife(0.5f);
+        return false;
+      }
+
       currentOrderItems.Remove(selectedKitchenObjectSo);
       OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
 
@@ -220,6 +256,22 @@ public class GameManager : SaveableBehaviour<GameData>
       _ = currentCustomer.SendChatMessageAsync("I didn't order that. Please give me what I ordered.");
       return false;
     }
+  }
+
+  private void DecreaseLife(float amount)
+  {
+    remainingLives -= amount;
+    if (remainingLives < 0) remainingLives = 0;
+
+    OnLivesChanged?.Invoke(this, new OnLivesChangeArgs { remainingLives = remainingLives });
+
+    if (remainingLives <= 0)
+    {
+      Debug.Log("Game Over!");
+      // Handle game over logic here
+    }
+
+    Save();
   }
 
   public void StartGame()

@@ -177,6 +177,54 @@ public class InventoryManager : SaveableBehaviour<InventoryData>
     return null;
   }
 
+  public bool TryAddToInventory(KitchenObjectSo kitchenObjectSo)
+  {
+    if (kitchenObjectSo == null) return false;
+
+    // Try to add to an existing stack first
+    for (int i = 0; i < INVENTORY_SLOT_COUNT; i++)
+    {
+      InventoryItem slotItem = inventoryItems[i];
+      if (slotItem != null && slotItem.KitchenObjectSo == kitchenObjectSo && slotItem.Quantity < kitchenObjectSo.maxStackedQuantity)
+      {
+        slotItem.Quantity++;
+        OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
+        {
+          SlotIndex = i,
+          KitchenObjectSo = kitchenObjectSo,
+          Quantity = slotItem.Quantity
+        });
+
+        SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
+        Save();
+        return true;
+      }
+    }
+
+    // Try to add to an empty slot
+    for (int i = 0; i < INVENTORY_SLOT_COUNT; i++)
+    {
+      if (inventoryItems[i] == null)
+      {
+        inventoryItems[i] = new InventoryItem(kitchenObjectSo, 1);
+        OnInventorySlotUpdated?.Invoke(this, new InventorySlotEventArgs
+        {
+          SlotIndex = i,
+          KitchenObjectSo = kitchenObjectSo,
+          Quantity = 1
+        });
+
+        SoundManager.Instance?.PlaySound("inventory-interact-success", Vector3.zero);
+        Save();
+        return true;
+      }
+    }
+
+    // Inventory is full
+    SoundManager.Instance?.PlaySound("inventory-interact-error", Vector3.zero);
+    return false;
+  }
+
   public static int GetInventorySize() => INVENTORY_SLOT_COUNT;
 
   public override InventoryData GetSaveData()
