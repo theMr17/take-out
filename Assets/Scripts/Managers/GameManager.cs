@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using player2_sdk;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -155,6 +156,9 @@ public class GameManager : SaveableBehaviour<GameData>
       case "return-wrong-item":
         HandleReturnWrongItemFunction(functionCall);
         break;
+      case "heal-player":
+        UpdateLife(1f);
+        break;
       default:
         Debug.LogWarning($"Unknown function call: {functionCall.name}");
         break;
@@ -229,7 +233,7 @@ public class GameManager : SaveableBehaviour<GameData>
       if (!IsItemOrdered(selectedKitchenObjectSo))
       {
         _ = currentCustomer.SendChatMessageAsync($"You received ${selectedKitchenObjectSo.objectName}. You did not order that. You can return it to the customer and say something and keep it.");
-        DecreaseLife(0.5f);
+        UpdateLife(-0.5f);
         return false;
       }
 
@@ -250,18 +254,14 @@ public class GameManager : SaveableBehaviour<GameData>
       Save();
       return true;
     }
-    else
-    {
-      Debug.Log("Submitted item is not part of the order.");
-      _ = currentCustomer.SendChatMessageAsync("I didn't order that. Please give me what I ordered.");
-      return false;
-    }
+    return false;
   }
 
-  private void DecreaseLife(float amount)
+  private void UpdateLife(float amount)
   {
-    remainingLives -= amount;
+    remainingLives += amount;
     if (remainingLives < 0) remainingLives = 0;
+    if (remainingLives > totalLives) remainingLives = totalLives;
 
     OnLivesChanged?.Invoke(this, new OnLivesChangeArgs { remainingLives = remainingLives });
 
