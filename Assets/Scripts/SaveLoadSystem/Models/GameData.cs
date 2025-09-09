@@ -6,5 +6,5 @@ public class GameData
   public int currentNightIndex;
   public int currentCustomerIndex;
   public List<string> currentOrderItemNames = new();
-  public int remainingLives;
+  public int remainingLives = 5;
 }
