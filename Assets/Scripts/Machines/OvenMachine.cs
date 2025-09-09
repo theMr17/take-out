@@ -31,22 +31,25 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
                 ovenProgress += Time.deltaTime;
                 UpdateProgress(recipe);
 
-                SoundManager.Instance?.PlayLoopingSound("oven-bake", machineTopPoint.position);
+                // SoundManager.Instance?.PlayLoopingSound("oven-bake", machineTopPoint.position);
                 // Transition: input -> intermediate
                 if (currentObjectSo == recipe.input && ovenProgress >= recipe.interMediateBakeTime)
                 {
                     KitchenObject.DestroyKitchenObject(this);
                     KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
+                    ovenProgress = 0f;
                 }
                 // Transition: intermediate -> output
                 else if (currentObjectSo == recipe.intermediate && ovenProgress >= recipe.bakeProgressMax)
                 {
                     ReplaceWithOutput(recipe.output);
+                    ovenProgress = 0f;
                 }
                 // Transition: output -> burntOutput
                 else if (currentObjectSo == recipe.output && ovenProgress >= recipe.burntBakeTime)
                 {
                     ReplaceWithOutput(recipe.burntOutput);
+                    ovenProgress = 0f;
                     isBurnt = true;
                 }
                 Save();
@@ -80,7 +83,7 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
         KitchenObject.SpawnKitchenObject(takenObject, this);
 
-        SoundManager.Instance.PlaySound("place-pan", machineTopPoint.position);
+        // SoundManager.Instance.PlaySound("place-pan", machineTopPoint.position);
 
         ResetProgress();
         Save();

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac859810594489048926268cc0266199, type: 3}
   m_Name: Pizza
   m_EditorClassIdentifier: Assembly-CSharp::OvenRecipeSo
-  input: {fileID: 0}
-  intermediate: {fileID: 0}
-  output: {fileID: 0}
-  burntOutput: {fileID: 0}
-  interMediateBakeTime: 4
+  input: {fileID: 11400000, guid: 401d09a5d14f076489838a80d127d14a, type: 2}
+  intermediate: {fileID: 11400000, guid: 401d09a5d14f076489838a80d127d14a, type: 2}
+  output: {fileID: 11400000, guid: 30ee4d3df7acd1c4a8619b7827edcad6, type: 2}
+  burntOutput: {fileID: 11400000, guid: 30ee4d3df7acd1c4a8619b7827edcad6, type: 2}
+  interMediateBakeTime: 8
   burntBakeTime: 15
   bakeProgressMax: 10
