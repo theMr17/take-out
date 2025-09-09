@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2cdd91772f9b2a449d70192404c48e1, type: 3}
+  m_Name: Page 4
+  m_EditorClassIdentifier: Assembly-CSharp::DiaryPageSo
+  pageTitle: Night 4
+  pageContent: "They watch me. They know. I can\u2019t tell who is real anymore.\n\nTonight,
+    the shadow asked for the full feast: the flame, the river, and the brittle bones
+    drowned in fire. I served them all at once.\n\nThe kiosk walls bent inward when
+    he left. My reflection blinked though I did not.\n\nThis is the last thing I\u2019ll
+    ever write. If you\u2019re reading this\u2014don\u2019t stay for the fifth."

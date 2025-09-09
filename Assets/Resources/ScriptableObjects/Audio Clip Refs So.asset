@@ -29,3 +29,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: acb5a16ec43d96e46915ab89d066d0aa, type: 3}
   - key: grill-sizzle
     clip: {fileID: 8300000, guid: f4f59c13adf31134693d9667bb53f214, type: 3}
+  - key: flip-page
+    clip: {fileID: 8300000, guid: c61310e440855eb4fab6ae2a34772f11, type: 3}
