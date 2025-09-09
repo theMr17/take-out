@@ -233,7 +233,7 @@ public class GameManager : SaveableBehaviour<GameData>
       if (!IsItemOrdered(selectedKitchenObjectSo))
       {
         _ = currentCustomer.SendChatMessageAsync($"You received ${selectedKitchenObjectSo.objectName}. You did not order that. You can return it to the customer and say something and keep it.");
-        UpdateLife(-0.5f);
+        UpdateLife(-currentCustomer.GetComponent<Customer>().GetLifeDecreaseOnWrongItem());
         return false;
       }
 

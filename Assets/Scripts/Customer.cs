@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 
 public class Customer : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+  [SerializeField] private float lifeDecreaseOnWrongItem = 0.5f;
+
   public void OnPointerClick(PointerEventData eventData)
   {
     GameManager.Instance.SubmitOrder();
@@ -28,5 +30,10 @@ public class Customer : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
   {
     if (DialogUi.Instance == null) return;
     DialogUi.Instance.SetDialogBackground(mirrored);
+  }
+
+  public float GetLifeDecreaseOnWrongItem()
+  {
+    return lifeDecreaseOnWrongItem;
   }
 }

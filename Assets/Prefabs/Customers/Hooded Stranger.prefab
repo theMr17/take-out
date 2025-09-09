@@ -110,6 +110,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5943271045015542273, guid: 6a576fab062415742ba77588a2b7f7b7, type: 3}
+      propertyPath: lifeDecreaseOnWrongItem
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
