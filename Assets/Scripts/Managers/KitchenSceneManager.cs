@@ -1,14 +1,13 @@
 using UnityEngine;
 
-public class CounterSceneManager : MonoBehaviour
+public class KitchenSceneManager : MonoBehaviour
 {
-  [SerializeField] private Transform rainSfxTransform;
+  [SerializeField] private Transform _rainSfxTransform;
   [SerializeField] private Transform customerTransformReference;
 
   private void Start()
   {
-    SoundManager.Instance.PlayLoopingSound("rain", rainSfxTransform.position, false);
-    SoundManager.Instance.PlayLoopingSound("light-flicker", transform.position, false);
+    SoundManager.Instance.PlayLoopingSound("rain", _rainSfxTransform.position, true, 2f);
 
     SetupCustomerVisual();
 
@@ -22,6 +21,6 @@ public class CounterSceneManager : MonoBehaviour
 
   private void SetupCustomerVisual()
   {
-    GameManager.Instance.SetCustomerPosition(customerTransformReference, false);
+    GameManager.Instance.SetCustomerPosition(customerTransformReference, true);
   }
 }

@@ -24,7 +24,7 @@ public class GameManager : SaveableBehaviour<GameData>
   }
 
   public event EventHandler<int> OnNightChanged;
-  public event EventHandler<OnCustomerChangedArgs> OnCustomerChanged;
+  public event EventHandler<OnCustomerChangedArgs> OnNewCustomerSpawned;
   public class OnCustomerChangedArgs : EventArgs
   {
     public Customer newCustomer;
@@ -56,7 +56,6 @@ public class GameManager : SaveableBehaviour<GameData>
 
   private void LoadNight()
   {
-    currentCustomerIndex = 0;
     OnNightChanged?.Invoke(this, currentNightIndex);
     LoadCustomer();
   }
@@ -83,12 +82,23 @@ public class GameManager : SaveableBehaviour<GameData>
       return;
     }
 
-    OnCustomerChanged?.Invoke(this, new OnCustomerChangedArgs { newCustomer = currentNight.customers[currentCustomerIndex] });
-  }
+    var newCustomer = currentNight.customers[currentCustomerIndex];
 
-  public void SetCurrentCustomer(Player2Npc npc)
-  {
-    currentCustomer = npc;
+    // Spawn the customer
+    if (newCustomer != null)
+    {
+      var customer = Instantiate(newCustomer, customerSpawnPoint);
+      customer.transform.localPosition = Vector3.zero;
+      customer.transform.localRotation = Quaternion.identity;
+
+      var player2Npc = customer.GetComponent<Player2Npc>();
+      player2Npc.SetNpcManager(NpcManager.Instance);
+      player2Npc.SetInputField(SendMessageInputUi.Instance.GetInputField());
+      _ = player2Npc.SpawnNpcAsync();
+      currentCustomer = player2Npc;
+
+      OnNewCustomerSpawned?.Invoke(this, new OnCustomerChangedArgs { newCustomer = newCustomer });
+    }
   }
 
   public void NpcManager_OnNpcRegistered(object sender, EventArgs e)
@@ -160,9 +170,6 @@ public class GameManager : SaveableBehaviour<GameData>
         }
       }
       PlaceOrder(orderItems);
-
-      // temporary message, because the customer only places an order and not say anything.
-      // _ = currentCustomer.SendChatMessageAsync("Thanks! the order has been placed. how was your day?");
     }
     else
     {
@@ -208,6 +215,15 @@ public class GameManager : SaveableBehaviour<GameData>
   public void StartGame()
   {
     LoadNight();
+  }
+
+  public void SetCustomerPosition(Transform customerTransformRef, bool mirrorDialogUi = false)
+  {
+    customerSpawnPoint.transform.localPosition = customerTransformRef.localPosition;
+    customerSpawnPoint.transform.localRotation = customerTransformRef.localRotation;
+
+    if (currentCustomer != null)
+      currentCustomer.GetComponent<Customer>().MirrorDialogUi(mirrorDialogUi);
   }
 
   public override GameData GetSaveData()

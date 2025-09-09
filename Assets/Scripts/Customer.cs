@@ -27,4 +27,10 @@ public class Customer : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
       spriteRenderer.color = Color.white;
     }
   }
+
+  public void MirrorDialogUi(bool mirrored)
+  {
+    if (DialogUi.Instance == null) return;
+    DialogUi.Instance.SetDialogBackground(mirrored);
+  }
 }

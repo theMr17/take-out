@@ -117,5 +117,9 @@ public class DialogUi : MonoBehaviour
   {
     var image = dialogPanel.GetComponent<Image>();
     image.sprite = mirrored ? dialogBackgroundMirroredSprite : dialogBackgroundSprite;
+
+    var rectTransform = image.GetComponent<RectTransform>();
+    rectTransform.pivot = mirrored ? new Vector2(1f, 0f) : new Vector2(0f, 0f);
+    rectTransform.localPosition = mirrored ? new Vector3(-0.84f, 1.86f, 0f) : new Vector3(0.84f, 1.86f, 0f);
   }
 }
