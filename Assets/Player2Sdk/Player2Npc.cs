@@ -144,7 +144,8 @@ namespace player2_sdk
                 "Their dialogue may include strange, cryptic, or unsettling remarks, " +
                 "but they must remain in-character as customers speaking with the worker behind the counter. " +
                 "Every interaction begins with ordering or referencing food, and their behavior is rooted in being a diner patron, " +
-                "no matter how supernatural or eerie their personality becomes.",
+                "no matter how supernatural or eerie their personality becomes." +
+                "The NPC should leave once they received all the orders and should not place another order.",
                 commands = npcManager.GetSerializableFunctions(),
                 tts = new TTSInfo
                 {
@@ -282,6 +283,11 @@ namespace player2_sdk
                 string error = $"Failed to send message: {request.error} - Response: {request.downloadHandler.text}{traceInfo}";
                 Debug.LogError(error);
             }
+        }
+
+        public string GetNpcId()
+        {
+            return _npcID;
         }
     }
 }

@@ -125,6 +125,20 @@ namespace player2_sdk
 
         public event EventHandler<NpcResponseEventArgs> OnNpcResponseStateChanged;
         public event EventHandler OnNpcRegistered;
+        public event EventHandler<AudioStoppedEventArgs> OnNpcAudioStopped;
+
+        public class AudioStoppedEventArgs : EventArgs
+        {
+            public string NpcId { get; }
+            public float Duration { get; }
+
+            public AudioStoppedEventArgs(string npcId, float duration)
+            {
+                NpcId = npcId;
+                Duration = duration;
+            }
+        }
+
 
         private const string BaseUrl = "https://api.player2.game/v1";
 
@@ -270,7 +284,11 @@ namespace player2_sdk
 
                     // Start coroutine to decode and play audio using platform-specific implementation
                     var audioPlayer = AudioPlayerFactory.GetAudioPlayer();
-                    StartCoroutine(audioPlayer.PlayAudioFromDataUrl(response.audio.data, audioSource, id));
+                    StartCoroutine(audioPlayer.PlayAudioFromDataUrl(response.audio.data, audioSource, id, (clipLength) =>
+                    {
+                        // Start a coroutine to wait for playback end
+                        StartCoroutine(WaitForAudioEnd(id, clipLength));
+                    }));
                 }
 
                 if (response.command == null || response.command.Count == 0)
@@ -296,6 +314,13 @@ namespace player2_sdk
                 Debug.LogError($"Unhandled exception processing response for NPC {id}: {ex.Message}");
                 OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Failed, $"Unhandled exception processing response for NPC {id}: {ex.Message}"));
             }
+        }
+
+        private IEnumerator WaitForAudioEnd(string npcId, float duration)
+        {
+            yield return new WaitForSeconds(duration + 3f);
+            Debug.Log($"Audio finished playing for NPC {npcId} (duration: {duration}s)");
+            OnNpcAudioStopped?.Invoke(this, new AudioStoppedEventArgs(npcId, duration));
         }
 
         public void UnregisterNpc(string id)

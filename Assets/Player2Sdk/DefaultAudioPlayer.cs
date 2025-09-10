@@ -12,7 +12,7 @@ namespace player2_sdk
     /// </summary>
     public class DefaultAudioPlayer : IAudioPlayer
     {
-        public IEnumerator PlayAudioFromDataUrl(string dataUrl, AudioSource audioSource, string identifier)
+        public IEnumerator PlayAudioFromDataUrl(string dataUrl, AudioSource audioSource, string identifier, Action<float> onAudioReady)
         {
             // Validate input parameters
             if (string.IsNullOrEmpty(dataUrl))
@@ -92,6 +92,7 @@ namespace player2_sdk
                         {
                             audioSource.clip = clip;
                             audioSource.Play();
+                            onAudioReady?.Invoke(clip.length);
                             Debug.Log($"Playing audio for {identifier} (duration: {clip.length}s)");
                         }
                         else

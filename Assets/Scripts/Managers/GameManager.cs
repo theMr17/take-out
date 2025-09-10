@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using player2_sdk;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.XR;
+using static player2_sdk.NpcManager;
 
 public class GameManager : SaveableBehaviour<GameData>
 {
@@ -40,6 +39,8 @@ public class GameManager : SaveableBehaviour<GameData>
     public float remainingLives;
   }
 
+  private bool leaveAfterThisDialog = false;
+
   private void Awake()
   {
     if (Instance != null && Instance != this)
@@ -58,11 +59,14 @@ public class GameManager : SaveableBehaviour<GameData>
     OnLivesChanged?.Invoke(this, new OnLivesChangeArgs { remainingLives = remainingLives });
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
+    NpcManager.Instance.OnNpcAudioStopped += NpcManager_OnNpcAudioStopped;
   }
 
   public void LoadNextNight()
   {
     currentNightIndex++;
+    currentCustomerIndex = 0;
+    Save();
     LoadNight();
   }
 
@@ -113,7 +117,7 @@ public class GameManager : SaveableBehaviour<GameData>
     }
   }
 
-  public void NpcManager_OnNpcRegistered(object sender, EventArgs e)
+  private void NpcManager_OnNpcRegistered(object sender, EventArgs e)
   {
     if (currentCustomer != null)
     {
@@ -122,6 +126,17 @@ public class GameManager : SaveableBehaviour<GameData>
     else
     {
       Debug.LogWarning("No current customer to send message to.");
+    }
+  }
+
+  private void NpcManager_OnNpcAudioStopped(object sender, AudioStoppedEventArgs e)
+  {
+    if (leaveAfterThisDialog && currentCustomer != null && currentCustomer.GetNpcId() == e.NpcId)
+    {
+      Destroy(currentCustomer.gameObject);
+      LoadNextCustomer();
+
+      leaveAfterThisDialog = false;
     }
   }
 
@@ -150,8 +165,7 @@ public class GameManager : SaveableBehaviour<GameData>
         HandlePlaceOrderFunction(functionCall);
         break;
       case "leave":
-        Destroy(currentCustomer.gameObject);
-        LoadNextCustomer();
+        HandleLeaveFunction();
         break;
       case "return-wrong-item":
         HandleReturnWrongItemFunction(functionCall);
@@ -193,6 +207,11 @@ public class GameManager : SaveableBehaviour<GameData>
     {
       Debug.LogWarning("Function call 'place-order' missing 'orderItems' argument.");
     }
+  }
+
+  private void HandleLeaveFunction()
+  {
+    leaveAfterThisDialog = true;
   }
 
   private void HandleReturnWrongItemFunction(FunctionCall functionCall)
