@@ -2,5 +2,5 @@
 public class FryerMachineData
 {
     public string kitchenObjectId;
-    public int fryingProgress;
+    public long fryStartTimestamp;
 }

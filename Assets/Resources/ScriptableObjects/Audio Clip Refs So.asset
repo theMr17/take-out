@@ -31,3 +31,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: f4f59c13adf31134693d9667bb53f214, type: 3}
   - key: flip-page
     clip: {fileID: 8300000, guid: c61310e440855eb4fab6ae2a34772f11, type: 3}
+  - key: frying
+    clip: {fileID: 8300000, guid: ffcd4480672a59b45beeacc651c098bb, type: 3}

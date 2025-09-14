@@ -8,6 +8,7 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
 
     [SerializeField] private FrenchFryRecipeSo[] frenchFriesRecipeSoArray;
 
+    private DateTime? fryStartTime;
     private float fryProgress;
 
     private bool isLoadNeeded = true;
@@ -26,11 +27,18 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         {
             var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
             var recipe = GetFriesRecipeSoWithInput(currentObjectSo);
-            if (recipe != null && fryProgress < recipe.fryProgressMax)
+            if (recipe != null)
             {
-                fryProgress += Time.deltaTime;
+                if (fryStartTime == null)
+                {
+                    fryStartTime = DateTime.UtcNow; // fallback if missing
+                }
+
+                // Calculate elapsed time since frying started
+                double elapsed = (DateTime.UtcNow - fryStartTime.Value).TotalSeconds;
+                fryProgress = Mathf.Min((float)elapsed, recipe.fryProgressMax);
+
                 UpdateProgress(recipe);
-                SoundManager.Instance?.PlaySound("fill-coffee-cup", machineTopPoint.position);
 
                 // Check for intermediate stage
                 if (fryProgress >= recipe.interMediateFryTime && currentObjectSo != recipe.intermediate)
@@ -49,6 +57,8 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         else
         {
             fryProgress = 0f;
+            fryStartTime = null;
+            SoundManager.Instance.StopLoopingSound("frying");
         }
     }
 
@@ -72,7 +82,7 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
         KitchenObject.SpawnKitchenObject(takenObject, this);
 
-        SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
+        SoundManager.Instance.PlayLoopingSound("frying", machineTopPoint.position, false);
 
         ResetProgress();
         Save();
@@ -91,12 +101,16 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
 
         KitchenObject.DestroyKitchenObject(this);
         ResetProgress();
+
+        SoundManager.Instance.StopLoopingSound("frying");
     }
 
     private void ReplaceWithOutput(KitchenObjectSo outputSo)
     {
         KitchenObject.DestroyKitchenObject(this);
         KitchenObject.SpawnKitchenObject(outputSo, this);
+
+        SoundManager.Instance.StopLoopingSound("frying");
     }
 
     private void ResetProgress()
@@ -139,21 +153,20 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         if (HasKitchenObject())
         {
             data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
-            data.fryingProgress = Mathf.RoundToInt(fryProgress); // Save as int if needed
+            data.fryStartTimestamp = fryStartTime?.ToBinary() ?? 0; // store DateTime as long
         }
         else
         {
             data.kitchenObjectId = "";
-            data.fryingProgress = 0;
+            data.fryStartTimestamp = 0;
         }
 
         return data;
     }
 
+
     public override void LoadFromSaveData(FryerMachineData data)
     {
-        fryProgress = data.fryingProgress;
-
         if (!string.IsNullOrEmpty(data.kitchenObjectId))
         {
             var kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{data.kitchenObjectId}");
@@ -161,13 +174,9 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
             {
                 KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
 
-                var recipe = GetFriesRecipeSoWithInput(kitchenObjectSo);
-                if (recipe != null)
+                if (data.fryStartTimestamp != 0)
                 {
-                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
-                    {
-                        progressNormalized = (float)fryProgress / recipe.fryProgressMax
-                    });
+                    fryStartTime = DateTime.FromBinary(data.fryStartTimestamp);
                 }
             }
         }
