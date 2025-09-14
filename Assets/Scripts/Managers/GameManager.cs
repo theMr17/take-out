@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using player2_sdk;
 using UnityEngine;
-using static player2_sdk.NpcManager;
 
 public class GameManager : SaveableBehaviour<GameData>
 {
@@ -84,6 +83,8 @@ public class GameManager : SaveableBehaviour<GameData>
 
   public void LoadCustomer()
   {
+    leaveAfterThisDialog = false;
+
     if (currentNightIndex >= nightSoList.Count)
     {
       Debug.Log("All nights completed!");
@@ -93,6 +94,7 @@ public class GameManager : SaveableBehaviour<GameData>
     NightSo currentNight = nightSoList[currentNightIndex];
     if (currentCustomerIndex >= currentNight.customers.Count)
     {
+      Debug.Log("All customers for this night served! Loading next night...");
       LoadNextNight();
       return;
     }
@@ -157,6 +159,8 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     Debug.Log($"Handling function call: {functionCall.name}");
     Debug.Log($"Handling arguments: {functionCall.arguments}");
+
+    leaveAfterThisDialog = false;
 
     switch (functionCall.name)
     {
