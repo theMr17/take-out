@@ -138,6 +138,8 @@ namespace player2_sdk
                 // Call JavaScript function to play audio
                 PlayAudioWithJavaScript(identifier, base64Audio, audioSource);
 
+                // onAudioReady?.Invoke(5f); // Assume 5 seconds duration if unknown
+
                 Debug.Log($"Playing audio for {identifier} using JavaScript interop");
             }
             catch (Exception ex)

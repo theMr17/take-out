@@ -59,7 +59,6 @@ public class GameManager : SaveableBehaviour<GameData>
     OnLivesChanged?.Invoke(this, new OnLivesChangeArgs { remainingLives = remainingLives });
 
     NpcManager.Instance.OnNpcRegistered += NpcManager_OnNpcRegistered;
-    NpcManager.Instance.OnNpcAudioStopped += NpcManager_OnNpcAudioStopped;
   }
 
   public void LoadNextNight()
@@ -129,9 +128,9 @@ public class GameManager : SaveableBehaviour<GameData>
     }
   }
 
-  private void NpcManager_OnNpcAudioStopped(object sender, AudioStoppedEventArgs e)
+  public void LeaveIfLastDialog()
   {
-    if (leaveAfterThisDialog && currentCustomer != null && currentCustomer.GetNpcId() == e.NpcId)
+    if (leaveAfterThisDialog && currentCustomer != null)
     {
       Destroy(currentCustomer.gameObject);
       LoadNextCustomer();

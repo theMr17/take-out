@@ -271,6 +271,11 @@ namespace player2_sdk
                         Debug.Log($"(No UI) NPC {id} message: {response.message}");
                     }
                 }
+                else
+                {
+                    Debug.Log($"NPC {id} sent no message in response.");
+                    OnNpcResponseStateChanged?.Invoke(this, new NpcResponseEventArgs(id, NpcResponseState.Received, ""));
+                }
 
                 // Handle audio playback if audio data is available
                 if (response.audio != null && !string.IsNullOrEmpty(response.audio.data))

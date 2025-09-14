@@ -51,6 +51,7 @@ public class DialogUi : MonoBehaviour
       StopCoroutine(loadingCoroutine);
       loadingCoroutine = null;
     }
+    StopPlayingTypingSound();
 
     switch (e.State)
     {
@@ -83,6 +84,10 @@ public class DialogUi : MonoBehaviour
       yield return new WaitForSeconds(typingSpeed);
     }
     StopPlayingTypingSound();
+
+    // Wait a moment before despawining the customer
+    yield return new WaitForSeconds(2f);
+    GameManager.Instance.LeaveIfLastDialog();
   }
 
   private IEnumerator AnimateThinkingDots()
