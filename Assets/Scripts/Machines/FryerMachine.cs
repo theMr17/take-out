@@ -1,6 +1,14 @@
 using System;
 using UnityEngine;
 
+public enum FryerState
+{
+    Idle, // nothing inside
+    Frying, // raw item is frying
+    HalfDone, // intermediate stage (e.g., par-fried)
+    Done // fries ready
+}
+
 public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
 {
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
@@ -8,6 +16,7 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
 
     [SerializeField] private FrenchFryRecipeSo[] frenchFriesRecipeSoArray;
 
+    private FryerState currentState = FryerState.Idle;
     private DateTime? fryStartTime;
     private float fryProgress;
 
@@ -23,43 +32,38 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
             isLoadNeeded = false;
         }
 
-        if (HasKitchenObject())
+        if (!HasKitchenObject())
         {
-            var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
-            var recipe = GetFriesRecipeSoWithInput(currentObjectSo);
-            if (recipe != null)
-            {
-                if (fryStartTime == null)
-                {
-                    fryStartTime = DateTime.UtcNow; // fallback if missing
-                }
+            SetState(FryerState.Idle);
+            return;
+        }
 
-                // Calculate elapsed time since frying started
-                double elapsed = (DateTime.UtcNow - fryStartTime.Value).TotalSeconds;
-                fryProgress = Mathf.Min((float)elapsed, recipe.fryProgressMax);
+        var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
+        var recipe = GetFriesRecipeSoWithInput(currentObjectSo);
+        if (recipe == null) return;
 
-                UpdateProgress(recipe);
+        if (fryStartTime == null)
+            fryStartTime = DateTime.UtcNow;
 
-                // Check for intermediate stage
-                if (fryProgress >= recipe.interMediateFryTime && currentObjectSo != recipe.intermediate)
-                {
-                    KitchenObject.DestroyKitchenObject(this);
-                    KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
-                }
+        double elapsed = (DateTime.UtcNow - fryStartTime.Value).TotalSeconds;
+        fryProgress = Mathf.Min((float)elapsed, recipe.fryProgressMax);
 
-                if (fryProgress >= recipe.fryProgressMax)
-                {
-                    ReplaceWithOutput(recipe.output);
-                }
-                Save();
-            }
+        UpdateProgress(recipe);
+
+        if (fryProgress >= recipe.fryProgressMax)
+        {
+            SetState(FryerState.Done);
+        }
+        else if (fryProgress >= recipe.interMediateFryTime && currentObjectSo != recipe.intermediate)
+        {
+            SetState(FryerState.HalfDone);
         }
         else
         {
-            fryProgress = 0f;
-            fryStartTime = null;
-            SoundManager.Instance.StopLoopingSound("frying");
+            SetState(FryerState.Frying);
         }
+
+        Save();
     }
 
     public override void Interact()
@@ -67,23 +71,18 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         if (HasKitchenObject())
         {
             HandleFriesPickup();
-            Save(); // Save after change
+            Save();
             return;
         }
 
-        // Get currently selected object from inventory
         var selectedObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
-        if (selectedObjectSo == null) return;
+        if (selectedObjectSo == null || !HasRecipeWithInput(selectedObjectSo)) return;
 
-        // Ensure this object can be used in a recipe
-        if (!HasRecipeWithInput(selectedObjectSo)) return;
-
-        // Place the cup in the machine and remove it from inventory
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
         KitchenObject.SpawnKitchenObject(takenObject, this);
 
-        SoundManager.Instance.PlayLoopingSound("frying", machineTopPoint.position, false);
-
+        fryStartTime = DateTime.UtcNow;
+        SetState(FryerState.Frying);
         ResetProgress();
         Save();
     }
@@ -100,17 +99,47 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
         if (!InventoryManager.Instance.TryPickupObject(currentObjectSo)) return;
 
         KitchenObject.DestroyKitchenObject(this);
-        ResetProgress();
-
-        SoundManager.Instance.StopLoopingSound("frying");
+        SetState(FryerState.Idle);
     }
 
-    private void ReplaceWithOutput(KitchenObjectSo outputSo)
+    private void SetState(FryerState newState)
     {
-        KitchenObject.DestroyKitchenObject(this);
-        KitchenObject.SpawnKitchenObject(outputSo, this);
+        if (currentState == newState) return;
 
-        SoundManager.Instance.StopLoopingSound("frying");
+        currentState = newState;
+
+        switch (newState)
+        {
+            case FryerState.Idle:
+                fryStartTime = null;
+                fryProgress = 0f;
+                SoundManager.Instance.StopLoopingSound("frying");
+                break;
+
+            case FryerState.Frying:
+                fryStartTime ??= DateTime.UtcNow;
+                SoundManager.Instance.PlayLoopingSound("frying", machineTopPoint.position, false);
+                break;
+
+            case FryerState.HalfDone:
+                var recipe = GetFriesRecipeSoWithInput(GetKitchenObject().GetKitchenObjectSO());
+                if (recipe != null)
+                {
+                    KitchenObject.DestroyKitchenObject(this);
+                    KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
+                }
+                break;
+
+            case FryerState.Done:
+                var doneRecipe = GetFriesRecipeSoWithInput(GetKitchenObject().GetKitchenObjectSO());
+                if (doneRecipe != null)
+                {
+                    KitchenObject.DestroyKitchenObject(this);
+                    KitchenObject.SpawnKitchenObject(doneRecipe.output, this);
+                }
+                SoundManager.Instance.StopLoopingSound("frying");
+                break;
+        }
     }
 
     private void ResetProgress()
@@ -129,7 +158,6 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
             progressNormalized = fryProgress / recipe.fryProgressMax
         });
 
-        // Notify listeners that a successful fill interaction happened
         OnFryInteractSuccess?.Invoke(this, EventArgs.Empty);
     }
 
@@ -144,7 +172,7 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
     }
 
     private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
-      GetFriesRecipeSoWithInput(inputSo) != null;
+        GetFriesRecipeSoWithInput(inputSo) != null;
 
     public override FryerMachineData GetSaveData()
     {
@@ -163,7 +191,6 @@ public class FryerMachine : BaseMachine<FryerMachineData>, IHasProgress
 
         return data;
     }
-
 
     public override void LoadFromSaveData(FryerMachineData data)
     {
