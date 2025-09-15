@@ -2,6 +2,5 @@
 public class OvenMachineData
 {
     public string kitchenObjectId;
-    public int ovenProgress;
-    public bool isBurnt;
+    public long bakeStartTimestamp;
 }

@@ -1,24 +1,40 @@
 using System;
 using UnityEngine;
 
+public enum OvenState
+{
+    Idle, // nothing inside
+    Baking, // currently baking
+    Done // fully baked
+}
+
 public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
 {
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
+
     [SerializeField] private OvenRecipeSo[] ovenRecipeSoArray;
+
+    [SerializeField] private GameObject openDoorVisual;
+    [SerializeField] private GameObject closedDoorVisual;
+
+    private OvenState currentState = OvenState.Idle;
+    private DateTime? bakeStartTime;
     private float ovenProgress;
+    private bool isLoadNeeded = true;
 
     protected override string GetSaveKey() => "ovenMachine";
 
-    private void Awake()
-    {
-        Load();
-    }
-
     private void Update()
     {
+        if (isLoadNeeded)
+        {
+            Load();
+            isLoadNeeded = false;
+        }
+
         if (!HasKitchenObject())
         {
-            ovenProgress = 0f;
+            SetState(OvenState.Idle);
             return;
         }
 
@@ -26,14 +42,25 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
         var recipe = GetOvenRecipeSoWithState(currentObjectSo);
         if (recipe == null) return;
 
-        ovenProgress += Time.deltaTime;
+        // Ensure start time is set
+        if (bakeStartTime == null)
+            bakeStartTime = DateTime.UtcNow;
+
+        double elapsed = (DateTime.UtcNow - bakeStartTime.Value).TotalSeconds;
+        ovenProgress = Mathf.Min((float)elapsed, recipe.bakeProgressMax);
+
         UpdateProgress(recipe);
 
-        if (currentObjectSo == recipe.input && ovenProgress >= recipe.bakeProgressMax)
+        if (ovenProgress >= recipe.bakeProgressMax && currentObjectSo == recipe.input)
         {
             ReplaceWithOutput(recipe.output);
-            ovenProgress = 0f;
+            SetState(OvenState.Done);
         }
+        else
+        {
+            SetState(OvenState.Baking);
+        }
+
         Save();
     }
 
@@ -52,22 +79,25 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
 
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
         KitchenObject.SpawnKitchenObject(takenObject, this);
+        bakeStartTime = DateTime.UtcNow;
         ResetProgress();
+        SetState(OvenState.Baking);
         Save();
     }
 
     public override void InteractAlternate()
     {
-        // No longer needed for oven progress
-        // Could be used for other alternate interactions if needed
+        // Currently not used, can be extended for special oven features
     }
 
     private void HandleOvenPickup()
     {
         var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
         if (!InventoryManager.Instance.TryPickupObject(currentObjectSo)) return;
+
         KitchenObject.DestroyKitchenObject(this);
         ResetProgress();
+        SetState(OvenState.Idle);
     }
 
     private void ReplaceWithOutput(KitchenObjectSo outputSo)
@@ -79,6 +109,7 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
     private void ResetProgress()
     {
         ovenProgress = 0f;
+        bakeStartTime = null;
         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
         {
             progressNormalized = 0f
@@ -93,11 +124,38 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
         });
     }
 
+    private void SetState(OvenState newState)
+    {
+        if (currentState == newState) return;
+        currentState = newState;
+
+        switch (newState)
+        {
+            case OvenState.Idle:
+                bakeStartTime = null;
+                ovenProgress = 0f;
+                openDoorVisual.SetActive(true);
+                closedDoorVisual.SetActive(false);
+                break;
+
+            case OvenState.Baking:
+                bakeStartTime ??= DateTime.UtcNow;
+                openDoorVisual.SetActive(false);
+                closedDoorVisual.SetActive(true);
+                break;
+
+            case OvenState.Done:
+                openDoorVisual.SetActive(true);
+                closedDoorVisual.SetActive(false);
+                break;
+        }
+    }
+
     private OvenRecipeSo GetOvenRecipeSoWithState(KitchenObjectSo stateSo)
     {
         foreach (var recipe in ovenRecipeSoArray)
         {
-            if (recipe.input == stateSo || recipe.output == stateSo)
+            if (recipe.input == stateSo)
                 return recipe;
         }
         return null;
@@ -112,28 +170,35 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
         if (HasKitchenObject())
         {
             data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
-            data.ovenProgress = Mathf.RoundToInt(ovenProgress);
+            data.bakeStartTimestamp = bakeStartTime?.ToBinary() ?? 0;
         }
         else
         {
             data.kitchenObjectId = "";
-            data.ovenProgress = 0;
+            data.bakeStartTimestamp = 0;
         }
         return data;
     }
 
     public override void LoadFromSaveData(OvenMachineData data)
     {
-        ovenProgress = data.ovenProgress;
         if (!string.IsNullOrEmpty(data.kitchenObjectId))
         {
             var kitchenObjectSo = Resources.Load<KitchenObjectSo>("ScriptableObjects/KitchenObjects/" + data.kitchenObjectId);
             if (kitchenObjectSo != null)
             {
                 KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
-                var recipe = GetOvenRecipeSoWithState(kitchenObjectSo);
-                if (recipe != null)
+
+                if (data.bakeStartTimestamp != 0)
                 {
+                    bakeStartTime = DateTime.FromBinary(data.bakeStartTimestamp);
+                }
+
+                var recipe = GetOvenRecipeSoWithState(kitchenObjectSo);
+                if (recipe != null && bakeStartTime != null)
+                {
+                    double elapsed = (DateTime.UtcNow - bakeStartTime.Value).TotalSeconds;
+                    ovenProgress = Mathf.Min((float)elapsed, recipe.bakeProgressMax);
                     OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
                     {
                         progressNormalized = Mathf.Clamp01(ovenProgress / recipe.bakeProgressMax)
