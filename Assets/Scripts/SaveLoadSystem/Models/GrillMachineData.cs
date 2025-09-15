@@ -2,6 +2,6 @@
 public class GrillMachineData
 {
     public string kitchenObjectId;
-    public int grillProgress;
+    public long grillStartTimestamp;
     public bool isBurnt;
 }
