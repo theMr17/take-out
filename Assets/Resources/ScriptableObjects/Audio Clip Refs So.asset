@@ -39,5 +39,3 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 1cf407104f52f2f43ac066e426c29d7d, type: 3}
   - key: oven-fan
     clip: {fileID: 8300000, guid: 4e251aacc09b94c458618c968fb07eb0, type: 3}
-  - key: timer-complete
-    clip: {fileID: 8300000, guid: 55b89ad0975d0f24aaec2171521619c2, type: 3}
