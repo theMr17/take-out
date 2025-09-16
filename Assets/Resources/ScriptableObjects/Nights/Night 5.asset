@@ -25,3 +25,7 @@ MonoBehaviour:
   - {fileID: 3150871547260848091, guid: 9e1a9aaacca9cb74bab2f38cde352455, type: 3}
   - {fileID: 6400702101600475539, guid: c9b486787a8fc5e4bac4e99484a3ab8f, type: 3}
   - {fileID: 3150871547260848091, guid: be57f631636575049a1bc8cdce231126, type: 3}
+  strangerOrderItems:
+  - {fileID: 11400000, guid: e2fa1347198455c47bfdd427fc6e218d, type: 2}
+  - {fileID: 11400000, guid: 75b37d159a0bbea4ca83f84ec266bee4, type: 2}
+  - {fileID: 11400000, guid: 7b626ddcc428747439a7cb09a640c151, type: 2}

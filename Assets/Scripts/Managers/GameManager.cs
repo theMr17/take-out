@@ -128,9 +128,25 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     if (currentCustomer != null)
     {
-      _ = currentCustomer.SendChatMessageAsync("Hello! how was your day? " +
-    $"If you want to place and order, Choose an order from the following available items only: " +
-    $"{string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}");
+      var baseMsg = "Hello! how was your day? ";
+
+      var generalCustomerMsg = $"Place an order, choosing from the following available items only: " +
+        $"{string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}";
+
+      var hoodedStrangerMsg = $"You are a cryptic person, don't place the order directly, but hint the worker that you want {string.Join(", ", nightSoList[currentNightIndex].strangerOrderItems.ConvertAll(item => item.name))}";
+
+      string finalMsg;
+
+      if (currentCustomer.gameObject.name.Contains("Hooded Stranger"))
+      {
+        finalMsg = baseMsg + hoodedStrangerMsg;
+      }
+      else
+      {
+        finalMsg = baseMsg + generalCustomerMsg;
+      }
+
+      _ = currentCustomer.SendChatMessageAsync(finalMsg);
     }
     else
     {
