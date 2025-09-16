@@ -136,17 +136,25 @@ public class OvenMachine : BaseMachine<OvenMachineData>, IHasProgress
                 ovenProgress = 0f;
                 openDoorVisual.SetActive(true);
                 closedDoorVisual.SetActive(false);
+                SoundManager.Instance.StopLoopingSound("oven-fan");
                 break;
 
             case OvenState.Baking:
                 bakeStartTime ??= DateTime.UtcNow;
+
+                SoundManager.Instance.PlaySound("oven-door-close", transform.position);
                 openDoorVisual.SetActive(false);
                 closedDoorVisual.SetActive(true);
+
+                SoundManager.Instance.PlayLoopingSound("oven-fan", transform.position, false);
                 break;
 
             case OvenState.Done:
+                SoundManager.Instance.PlaySound("oven-door-open", transform.position);
                 openDoorVisual.SetActive(true);
                 closedDoorVisual.SetActive(false);
+
+                SoundManager.Instance.StopLoopingSound("oven-fan");
                 break;
         }
     }

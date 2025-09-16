@@ -33,3 +33,11 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c61310e440855eb4fab6ae2a34772f11, type: 3}
   - key: frying
     clip: {fileID: 8300000, guid: ffcd4480672a59b45beeacc651c098bb, type: 3}
+  - key: oven-door-open
+    clip: {fileID: 8300000, guid: b81533b311b28804c905f5669eed18b3, type: 3}
+  - key: oven-door-close
+    clip: {fileID: 8300000, guid: 1cf407104f52f2f43ac066e426c29d7d, type: 3}
+  - key: oven-fan
+    clip: {fileID: 8300000, guid: 4e251aacc09b94c458618c968fb07eb0, type: 3}
+  - key: timer-complete
+    clip: {fileID: 8300000, guid: 55b89ad0975d0f24aaec2171521619c2, type: 3}
