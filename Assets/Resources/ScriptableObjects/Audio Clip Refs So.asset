@@ -39,3 +39,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 1cf407104f52f2f43ac066e426c29d7d, type: 3}
   - key: oven-fan
     clip: {fileID: 8300000, guid: 4e251aacc09b94c458618c968fb07eb0, type: 3}
+  - key: bell
+    clip: {fileID: 8300000, guid: 4fcbbd9ea76291a44bdcfe7ef017f1be, type: 3}

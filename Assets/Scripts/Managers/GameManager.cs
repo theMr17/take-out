@@ -78,7 +78,10 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     currentCustomerIndex++;
     Save();
-    LoadCustomer();
+
+    // add a random small delay before loading the next customer
+    float randomDelay = UnityEngine.Random.Range(2f, 4f);
+    Invoke(nameof(LoadCustomer), randomDelay);
   }
 
   public void LoadCustomer()
@@ -115,6 +118,9 @@ public class GameManager : SaveableBehaviour<GameData>
       currentCustomer = player2Npc;
 
       OnNewCustomerSpawned?.Invoke(this, new OnCustomerChangedArgs { newCustomer = newCustomer });
+
+
+      SoundManager.Instance.PlaySound("bell", transform.position);
     }
   }
 
@@ -122,7 +128,9 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     if (currentCustomer != null)
     {
-      _ = currentCustomer.SendChatMessageAsync("Hello! how was your day?");
+      _ = currentCustomer.SendChatMessageAsync("Hello! how was your day? " +
+    $"If you want to place and order, Choose an order from the following available items only: " +
+    $"{string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}");
     }
     else
     {
@@ -150,9 +158,7 @@ public class GameManager : SaveableBehaviour<GameData>
 
   public string GetCurrentGameStateInfo()
   {
-    return $"Current Night: {currentNightIndex + 1}."
-    + $"If you want to place and order, Choose an order from the following available items only: {string.Join(", ", nightSoList[currentNightIndex].unlockedOrderItems.ConvertAll(item => item.name))}. Placing order is not compulsory"
-    ;
+    return $"Current Night: {currentNightIndex + 1}.";
   }
 
   public void HandleFunctionCall(FunctionCall functionCall)
