@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using player2_sdk;
+using UnityEditor.SearchService;
 using UnityEngine;
 
 public class GameManager : SaveableBehaviour<GameData>
@@ -312,7 +313,8 @@ public class GameManager : SaveableBehaviour<GameData>
     if (remainingLives <= 0)
     {
       Debug.Log("Game Over!");
-      // Handle game over logic here
+
+      SceneLoader.Instance.LoadScene(SceneLoader.Scene.GameOverScene);
     }
 
     Save();
