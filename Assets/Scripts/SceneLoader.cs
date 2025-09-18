@@ -16,6 +16,7 @@ public class SceneLoader : MonoBehaviour
     StorageScene,
     KitchenScene,
     GameOverScene,
+    WinScene,
   }
 
   private void Awake()

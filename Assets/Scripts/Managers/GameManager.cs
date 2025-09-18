@@ -65,6 +65,13 @@ public class GameManager : SaveableBehaviour<GameData>
   {
     currentNightIndex++;
     currentCustomerIndex = 0;
+
+    if (currentNightIndex >= nightSoList.Count)
+    {
+      Debug.Log("All nights completed!");
+      SceneLoader.Instance.LoadScene(SceneLoader.Scene.WinScene);
+    }
+
     Save();
     LoadNight();
   }
