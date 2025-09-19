@@ -48,7 +48,7 @@ public class OrdersUi : MonoBehaviour
     {
       var orderItemObj = Instantiate(orderItemPrefab, ordersContainer);
       var orderItemUi = orderItemObj.GetComponent<OrderItemUi>();
-      orderItemUi.SetKitchenObject(item);
+      orderItemUi.SetKitchenObject(item, cryptic: e.cryptic);
     }
 
     noActiveOrdersText.SetActive(e.orderItems.Count == 0);

@@ -447,5 +447,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrderItemUi
   iconImage: {fileID: 1152886148550314268}
+  unknownIconImage: {fileID: 21300000, guid: 6a622befa7fd579429db81088f567bd8, type: 3}
   orderNameText: {fileID: 4739683296763158026}
   orderQuantityText: {fileID: 8674142205677696057}

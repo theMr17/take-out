@@ -24,6 +24,7 @@ public class GameManager : SaveableBehaviour<GameData>
   public class OnOrderUpdatedArgs : EventArgs
   {
     public List<KitchenObjectSo> orderItems;
+    public bool cryptic;
   }
 
   public event EventHandler<int> OnNightChanged;
@@ -181,7 +182,7 @@ public class GameManager : SaveableBehaviour<GameData>
   public void PlaceOrder(List<KitchenObjectSo> orderItems)
   {
     currentOrderItems = orderItems;
-    OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
+    OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems, cryptic = currentCustomer.gameObject.name.Contains("Hooded Stranger") });
     Save();
   }
 
@@ -321,7 +322,7 @@ public class GameManager : SaveableBehaviour<GameData>
       }
 
       currentOrderItems.Remove(selectedKitchenObjectSo);
-      OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
+      OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems, cryptic = currentCustomer.gameObject.name.Contains("Hooded Stranger") });
 
       if (currentOrderItems.Count == 0)
       {
@@ -400,7 +401,6 @@ public class GameManager : SaveableBehaviour<GameData>
     currentNightIndex = data.currentNightIndex;
     currentCustomerIndex = data.currentCustomerIndex;
 
-    currentOrderItems = data.currentOrderItemNames.ConvertAll(name => Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{name}"));
     OnOrderUpdated?.Invoke(this, new OnOrderUpdatedArgs { orderItems = currentOrderItems });
 
     remainingLives = data.remainingLives;
