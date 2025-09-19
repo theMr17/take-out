@@ -38,6 +38,12 @@ public class GameManager : SaveableBehaviour<GameData>
     public float remainingLives;
   }
 
+  public event EventHandler<OnOptionsReceivedArgs> OnOptionsReceived;
+  public class OnOptionsReceivedArgs : EventArgs
+  {
+    public List<string> options;
+  }
+
   private bool leaveAfterThisDialog = false;
 
   private void Awake()
@@ -205,6 +211,9 @@ public class GameManager : SaveableBehaviour<GameData>
       case "heal-player":
         UpdateLife(1f);
         break;
+      case "message-options":
+        HandleMessageOptionsFunction(functionCall);
+        break;
       default:
         Debug.LogWarning($"Unknown function call: {functionCall.name}");
         break;
@@ -271,6 +280,29 @@ public class GameManager : SaveableBehaviour<GameData>
     }
   }
 
+  private void HandleMessageOptionsFunction(FunctionCall functionCall)
+  {
+    Debug.Log($"Handling message-options function call");
+    Debug.Log($"Handling arguments: {functionCall.arguments}");
+
+    if (functionCall.arguments.TryGetValue("options", out JToken optionsToken))
+    {
+      List<string> options = new();
+      foreach (var item in optionsToken)
+      {
+        string option = item.ToString();
+        options.Add(option);
+        Debug.Log($"Added option: {option}");
+      }
+
+      OnOptionsReceived?.Invoke(this, new OnOptionsReceivedArgs { options = options });
+    }
+    else
+    {
+      Debug.LogWarning("Function call 'message-options' missing 'options' argument.");
+    }
+  }
+
   public bool IsItemOrdered(KitchenObjectSo kitchenObjectSo)
   {
     return currentOrderItems.Contains(kitchenObjectSo);
@@ -329,6 +361,18 @@ public class GameManager : SaveableBehaviour<GameData>
   public void StartGame()
   {
     LoadNight();
+  }
+
+  public void SendMessageToCurrentCustomer(string message)
+  {
+    if (currentCustomer != null)
+    {
+      _ = currentCustomer.SendChatMessageAsync(message);
+    }
+    else
+    {
+      Debug.LogWarning("No current customer to send message to.");
+    }
   }
 
   public void SetCustomerPosition(Transform customerTransformRef, bool mirrorDialogUi = false)
