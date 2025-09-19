@@ -188,3 +188,4 @@ MonoBehaviour:
   assemblyRecipeSoArray:
   - {fileID: 11400000, guid: ebe748326152ba24db996ba35e56c211, type: 2}
   - {fileID: 11400000, guid: dddd05beb28b1104684f9eff6d19ba0c, type: 2}
+  - {fileID: 11400000, guid: b503800f786269e40b2db79ae2be3758, type: 2}

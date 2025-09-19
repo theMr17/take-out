@@ -22,82 +22,93 @@ public class AssemblyMachine : BaseMachine<AssemblyMachineData>
 
     public override void Interact()
     {
+        var selectedObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
+
         if (!HasKitchenObject())
         {
-            // Get currently selected object from inventory
-            var selectedObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
-            if (selectedObjectSo == null) return;
-
-            // Ensure this object can be used in a recipe
-            if (!HasRecipeWithInput(selectedObjectSo)) return;
-
-            // Place the object in the machine and remove it from inventory
-            var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
-            KitchenObject.SpawnKitchenObject(takenObject, this);
+            TryPlaceObject(selectedObjectSo);
         }
         else
         {
-            // Machine already has an object, try to combine with selected object
-            var selectedObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
-            if (selectedObjectSo == null || selectedObjectSo == GetKitchenObject().GetKitchenObjectSO())
-            {
-                HandlePickup();
-                Save();
-                return;
-            }
-
-            var recipe = GetAssemblyRecipeSoWithInput(selectedObjectSo);
-            if (recipe == null) return;
-
-            // Remove the selected object from inventory
-            InventoryManager.Instance.TakeOneFromSelectedSlot();
-
-            // Replace the current object in the machine with the output
-            ReplaceWithOutput(recipe.output);
-
-            OnAssemblyInteractSuccess?.Invoke(this, EventArgs.Empty);
+            TryAssembleOrPickup(selectedObjectSo);
         }
 
-        Save(); // Save after placing object
+        Save();
     }
 
     public override void InteractAlternate()
     {
-        return; // No alternate interaction needed for fryer
+        // No alternate interaction defined for assembly machine
     }
 
-    private void HandlePickup()
+    private void TryPlaceObject(KitchenObjectSo selectedObjectSo)
+    {
+        if (selectedObjectSo == null) return;
+
+        if (!HasRecipeWithInput(selectedObjectSo)) return;
+
+        var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
+        if (takenObject == null) return;
+
+        KitchenObject.SpawnKitchenObject(takenObject, this);
+    }
+
+    private void TryAssembleOrPickup(KitchenObjectSo selectedObjectSo)
+    {
+        if (selectedObjectSo == null || selectedObjectSo == GetKitchenObject().GetKitchenObjectSO())
+        {
+            TryPickupFromMachine();
+            return;
+        }
+
+        var recipe = GetAssemblyRecipeWithInput(selectedObjectSo);
+        if (recipe == null) return;
+
+        InventoryManager.Instance.TakeOneFromSelectedSlot();
+        ReplaceWithOutput(recipe.output);
+
+        OnAssemblyInteractSuccess?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void TryPickupFromMachine()
     {
         var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
 
-        if (!InventoryManager.Instance.TryPickupObject(currentObjectSo)) return;
-
-        KitchenObject.DestroyKitchenObject(this);
+        if (InventoryManager.Instance.TryPickupObject(currentObjectSo))
+        {
+            KitchenObject.DestroyKitchenObject(this);
+        }
     }
 
-    private AssemblyRecipeSo GetAssemblyRecipeSoWithInput(KitchenObjectSo inputSo)
+    private AssemblyRecipeSo GetAssemblyRecipeWithInput(KitchenObjectSo inputSo)
     {
+        if (inputSo == null) return null;
+
+        var machineObjectSo = HasKitchenObject() ? GetKitchenObject().GetKitchenObjectSO() : null;
+
         foreach (var recipe in assemblyRecipeSoArray)
         {
-
-            if (!HasKitchenObject())
+            if (machineObjectSo == null)
             {
-                if (recipe.input1 == inputSo || recipe.input2 == inputSo)
-                    return recipe;
+                // Machine empty: check if input is valid as first or second ingredient
+                if (recipe.input1 == inputSo || recipe.input2 == inputSo) return recipe;
             }
             else
             {
-                var machineObjectSo = GetKitchenObject().GetKitchenObjectSO();
-                if ((recipe.input1 == inputSo && recipe.input2 == machineObjectSo)
-                 || (recipe.input2 == inputSo && recipe.input1 == machineObjectSo))
+                // Machine has an object: check if selected + current form a valid pair
+                if ((recipe.input1 == inputSo && recipe.input2 == machineObjectSo) ||
+                    (recipe.input2 == inputSo && recipe.input1 == machineObjectSo))
+                {
                     return recipe;
+                }
             }
         }
+
         return null;
     }
 
     private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
-        GetAssemblyRecipeSoWithInput(inputSo) != null;
+        GetAssemblyRecipeWithInput(inputSo) != null;
 
     private void ReplaceWithOutput(KitchenObjectSo outputSo)
     {
@@ -107,29 +118,29 @@ public class AssemblyMachine : BaseMachine<AssemblyMachineData>
 
     public override AssemblyMachineData GetSaveData()
     {
-        var data = new AssemblyMachineData();
-
-        if (HasKitchenObject())
+        return new AssemblyMachineData
         {
-            data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
-        }
-        else
-        {
-            data.kitchenObjectId = "";
-        }
-
-        return data;
+            kitchenObjectId = HasKitchenObject()
+                ? GetKitchenObject().GetKitchenObjectSO().name
+                : string.Empty
+        };
     }
 
     public override void LoadFromSaveData(AssemblyMachineData data)
     {
-        if (!string.IsNullOrEmpty(data.kitchenObjectId))
+        if (string.IsNullOrEmpty(data.kitchenObjectId)) return;
+
+        var kitchenObjectSo = Resources.Load<KitchenObjectSo>(
+            $"ScriptableObjects/KitchenObjects/{data.kitchenObjectId}"
+        );
+
+        if (kitchenObjectSo != null)
         {
-            var kitchenObjectSo = Resources.Load<KitchenObjectSo>($"ScriptableObjects/KitchenObjects/{data.kitchenObjectId}");
-            if (kitchenObjectSo != null)
-            {
-                KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
-            }
+            KitchenObject.SpawnKitchenObject(kitchenObjectSo, this);
+        }
+        else
+        {
+            Debug.LogWarning($"AssemblyMachine: Failed to load KitchenObjectSo {data.kitchenObjectId}");
         }
     }
 }
