@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
-  m_Name: Bun
+  m_Name: Plain Burger
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 2702543745538289886, guid: 82ff96bd4a7962b42a1bfa09eba85915, type: 3}
-  icon: {fileID: -1193964979, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
-  objectName: Bun
-  maxStackedQuantity: 2
+  prefab: {fileID: 2702543745538289886, guid: 0dc7ab6fef633b741bdce748e0136a24, type: 3}
+  icon: {fileID: -8763867710485335167, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
+  objectName: Plain Burger
+  maxStackedQuantity: 1
