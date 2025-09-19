@@ -20,8 +20,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 75b37d159a0bbea4ca83f84ec266bee4, type: 2}
   - {fileID: 11400000, guid: 30ee4d3df7acd1c4a8619b7827edcad6, type: 2}
   customers:
-  - {fileID: 3150871547260848091, guid: be57f631636575049a1bc8cdce231126, type: 3}
   - {fileID: 6400702101600475539, guid: c9b486787a8fc5e4bac4e99484a3ab8f, type: 3}
+  - {fileID: 3150871547260848091, guid: be57f631636575049a1bc8cdce231126, type: 3}
   - {fileID: 3150871547260848091, guid: 9e1a9aaacca9cb74bab2f38cde352455, type: 3}
   strangerOrderItems:
   - {fileID: 11400000, guid: 8773a607f653819429fabca5c3306282, type: 2}
