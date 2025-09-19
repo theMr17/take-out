@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &8623813507843458601
+--- !u!1001 &4317790646437445857
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,7 +10,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1843129536623484598, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_Name
-      value: CheeseSlice
+      value: Cheese Slice
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -52,6 +64,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2191707657514774591, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2333691416930142702, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 8707199833209870444, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
     - target: {fileID: 8884234011378392733, guid: 1601cb78348155e44945e8a143db0dd6, type: 3}
       propertyPath: kitchenObjectSO
       value: 
