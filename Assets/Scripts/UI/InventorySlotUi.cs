@@ -10,6 +10,7 @@ public class InventorySlotUi : MonoBehaviour
   [SerializeField] private GameObject selectedIndicator;
 
   private Image _backgroundImage;
+  private KitchenObjectSo _kitchenObjectSo;
 
   private void Awake()
   {
@@ -28,6 +29,8 @@ public class InventorySlotUi : MonoBehaviour
       return;
     }
 
+    _kitchenObjectSo = kitchenObjectSo;
+
     iconImage.sprite = kitchenObjectSo.icon;
     iconImage.gameObject.SetActive(true);
 
@@ -37,6 +40,8 @@ public class InventorySlotUi : MonoBehaviour
 
   public void ClearSlot()
   {
+    _kitchenObjectSo = null;
+
     iconImage.sprite = null;
     iconImage.gameObject.SetActive(false);
 
@@ -55,5 +60,10 @@ public class InventorySlotUi : MonoBehaviour
     {
       selectedIndicator.SetActive(isSelected);
     }
+  }
+
+  public string GetItemName()
+  {
+    return _kitchenObjectSo != null ? _kitchenObjectSo.objectName : string.Empty;
   }
 }

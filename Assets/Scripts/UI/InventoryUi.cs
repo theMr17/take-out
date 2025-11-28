@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class InventoryUi : MonoBehaviour
 {
   [SerializeField] private Transform inventorySlotsContainer;
   [SerializeField] private GameObject inventorySlotPrefab;
+  [SerializeField] private TextMeshProUGUI currentSelectedItemText;
 
   private readonly List<InventorySlotUi> slotUiList = new();
 
@@ -51,6 +53,11 @@ public class InventoryUi : MonoBehaviour
   {
     for (int i = 0; i < slotUiList.Count; i++)
     {
+      if (i == e.SelectedSlot)
+      {
+        currentSelectedItemText.text = slotUiList[i].GetItemName();
+      }
+
       slotUiList[i].SetSelected(i == e.SelectedSlot);
     }
   }
@@ -60,5 +67,10 @@ public class InventoryUi : MonoBehaviour
     if (e.SlotIndex < 0 || e.SlotIndex >= slotUiList.Count) return;
 
     slotUiList[e.SlotIndex].SetItem(e.KitchenObjectSo, e.Quantity);
+
+    if (e.SlotIndex == InventoryManager.Instance.GetSelectedSlotIndex())
+    {
+      currentSelectedItemText.text = slotUiList[e.SlotIndex].GetItemName();
+    }
   }
 }

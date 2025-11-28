@@ -15,7 +15,13 @@ MonoBehaviour:
   unlockedOrderItems:
   - {fileID: 11400000, guid: 30f5e5c1a782bd249906ba710c953344, type: 2}
   - {fileID: 11400000, guid: 485ab0bfe38578647967eaa8425f579c, type: 2}
+  - {fileID: 11400000, guid: e2fa1347198455c47bfdd427fc6e218d, type: 2}
+  - {fileID: 11400000, guid: a4ca2a1f6db01074cb73160a394b7fab, type: 2}
+  - {fileID: 11400000, guid: 75b37d159a0bbea4ca83f84ec266bee4, type: 2}
   customers:
   - {fileID: 3150871547260848091, guid: 2d45901a7cc90dd4082fd4ec571025ad, type: 3}
   - {fileID: 3150871547260848091, guid: 9e1a9aaacca9cb74bab2f38cde352455, type: 3}
   - {fileID: 3150871547260848091, guid: 9754afa90958d9041984fc693b4f60f8, type: 3}
+  - {fileID: 3150871547260848091, guid: be57f631636575049a1bc8cdce231126, type: 3}
+  strangerOrderItems:
+  - {fileID: 11400000, guid: a4ca2a1f6db01074cb73160a394b7fab, type: 2}

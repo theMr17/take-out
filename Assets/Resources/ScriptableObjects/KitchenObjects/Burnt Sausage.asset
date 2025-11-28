@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
   m_Name: Burnt Sausage
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 5767416868478978380, guid: 0c250a6915184ef44bcbece1fa5e4814, type: 3}
+  prefab: {fileID: 6120258714860638944, guid: 4b1159f35a0bd494eb2c346dd91999be, type: 3}
   icon: {fileID: 2102724298, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
-  objectName: Cooking Sausage
+  objectName: Burnt Sausage
   maxStackedQuantity: 10

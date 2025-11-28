@@ -1,14 +1,29 @@
 using System;
 using UnityEngine;
 
+public enum GrillState
+{
+    Idle, // nothing inside
+    Grilling, // raw item is grilling
+    HalfDone, // intermediate stage
+    Done, // properly grilled
+    Burnt // overcooked
+}
+
 public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
 {
-    private bool isBurnt = false;
-    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
-    public event EventHandler OnGrillInteractSuccess;
-    [SerializeField] private GrillRecipeSo[] grillRecipeSoArray;
+    private GrillState currentState = GrillState.Idle;
+
+    private DateTime? grillStartTime;
     private float grillProgress;
     private bool isLoadNeeded = true;
+
+    private bool isBurnt = false;
+
+    [SerializeField] private GrillRecipeSo[] grillRecipeSoArray;
+
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
+    public event EventHandler OnGrillInteractSuccess;
 
     protected override string GetSaveKey() => "grillMachine";
 
@@ -20,92 +35,128 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
             isLoadNeeded = false;
         }
 
-        if (HasKitchenObject())
+        if (!HasKitchenObject())
         {
-            if (isBurnt) return;
+            SetState(GrillState.Idle);
+            return;
+        }
 
-            var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
-            var recipe = GetGrillRecipeSoWithState(currentObjectSo);
-            if (recipe != null)
-            {
-                grillProgress += Time.deltaTime;
-                UpdateProgress(recipe);
+        if (isBurnt) return;
 
-                SoundManager.Instance?.PlayLoopingSound("grill-sizzle", machineTopPoint.position);
-                // Transition: input -> intermediate
-                if (currentObjectSo == recipe.input && grillProgress >= recipe.interMediateGrillTime)
-                {
-                    KitchenObject.DestroyKitchenObject(this);
-                    KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
-                }
-                // Transition: intermediate -> output
-                else if (currentObjectSo == recipe.intermediate && grillProgress >= recipe.grillProgressMax)
-                {
-                    ReplaceWithOutput(recipe.output);
-                }
-                // Transition: output -> burntOutput
-                else if (currentObjectSo == recipe.output && grillProgress >= recipe.burntGrillTime)
-                {
-                    ReplaceWithOutput(recipe.burntOutput);
-                    isBurnt = true;
-                }
-                Save();
-            }
+        var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
+        var recipe = GetGrillRecipeSoWithState(currentObjectSo);
+        if (recipe == null) return;
+
+        if (grillStartTime == null)
+            grillStartTime = DateTime.UtcNow;
+
+        double elapsed = (DateTime.UtcNow - grillStartTime.Value).TotalSeconds;
+        grillProgress = (float)elapsed;
+
+        UpdateProgress(recipe);
+
+        // Handle state transitions
+        if (currentObjectSo == recipe.input && grillProgress >= recipe.interMediateGrillTime)
+        {
+            SetState(GrillState.HalfDone, recipe);
+        }
+        else if (currentObjectSo == recipe.intermediate && grillProgress >= recipe.grillProgressMax)
+        {
+            SetState(GrillState.Done, recipe);
+        }
+        else if (currentObjectSo == recipe.output && grillProgress >= recipe.burntGrillTime)
+        {
+            SetState(GrillState.Burnt, recipe);
         }
         else
         {
-            grillProgress = 0f;
-            isBurnt = false;
+            SetState(GrillState.Grilling);
         }
+
+        Save();
     }
 
     public override void Interact()
     {
         if (HasKitchenObject())
         {
-            HandleFriesPickup();
-            Save(); // Save after change
+            HandlePickup();
+            Save();
             return;
         }
 
-        // Get currently selected object from inventory
         var selectedObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
         if (selectedObjectSo == null) return;
 
-        // Ensure this object can be used in a recipe
         var recipe = GetGrillRecipeSoWithState(selectedObjectSo);
         if (recipe == null || selectedObjectSo != recipe.input) return;
 
-        // Place the cup in the machine and remove it from inventory
         var takenObject = InventoryManager.Instance.TakeOneFromSelectedSlot();
         KitchenObject.SpawnKitchenObject(takenObject, this);
 
-        SoundManager.Instance.PlaySound("place-cup", machineTopPoint.position);
-
+        grillStartTime = DateTime.UtcNow;
+        SetState(GrillState.Grilling);
         ResetProgress();
         Save();
     }
 
-    // public override void InteractAlternate()
-    // {
-    //     // No longer needed for grilling progress
-    //     // Could be used for other alternate interactions if needed
-    // }
-
-    private void HandleFriesPickup()
+    private void HandlePickup()
     {
         var currentObjectSo = GetKitchenObject().GetKitchenObjectSO();
 
         if (!InventoryManager.Instance.TryPickupObject(currentObjectSo)) return;
 
         KitchenObject.DestroyKitchenObject(this);
-        ResetProgress();
+        SetState(GrillState.Idle);
     }
 
-    private void ReplaceWithOutput(KitchenObjectSo outputSo)
+    private void SetState(GrillState newState, GrillRecipeSo recipe = null)
     {
-        KitchenObject.DestroyKitchenObject(this);
-        KitchenObject.SpawnKitchenObject(outputSo, this);
+        if (currentState == newState) return;
+
+        currentState = newState;
+
+        switch (newState)
+        {
+            case GrillState.Idle:
+                grillStartTime = null;
+                grillProgress = 0f;
+                isBurnt = false;
+                SoundManager.Instance.StopLoopingSound("grill-sizzle");
+                break;
+
+            case GrillState.Grilling:
+                grillStartTime ??= DateTime.UtcNow;
+                SoundManager.Instance.PlayLoopingSound("grill-sizzle", machineTopPoint.position, false);
+                break;
+
+            case GrillState.HalfDone:
+                if (recipe != null)
+                {
+                    KitchenObject.DestroyKitchenObject(this);
+                    KitchenObject.SpawnKitchenObject(recipe.intermediate, this);
+                }
+                break;
+
+            case GrillState.Done:
+                if (recipe != null)
+                {
+                    KitchenObject.DestroyKitchenObject(this);
+                    KitchenObject.SpawnKitchenObject(recipe.output, this);
+                }
+                SoundManager.Instance.StopLoopingSound("grill-sizzle");
+                break;
+
+            case GrillState.Burnt:
+                if (recipe != null)
+                {
+                    KitchenObject.DestroyKitchenObject(this);
+                    KitchenObject.SpawnKitchenObject(recipe.burntOutput, this);
+                }
+                isBurnt = true;
+                SoundManager.Instance.StopLoopingSound("grill-sizzle");
+                break;
+        }
     }
 
     private void ResetProgress()
@@ -122,8 +173,10 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
     {
         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
         {
-            progressNormalized = grillProgress / recipe.grillProgressMax
+            progressNormalized = Mathf.Clamp01(grillProgress / recipe.grillProgressMax)
         });
+
+        OnGrillInteractSuccess?.Invoke(this, EventArgs.Empty);
     }
 
     private GrillRecipeSo GetGrillRecipeSoWithState(KitchenObjectSo stateSo)
@@ -136,9 +189,6 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
         return null;
     }
 
-    private bool HasRecipeWithInput(KitchenObjectSo inputSo) =>
-        GetGrillRecipeSoWithState(inputSo) != null;
-
     public override GrillMachineData GetSaveData()
     {
         var data = new GrillMachineData();
@@ -146,13 +196,13 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
         if (HasKitchenObject())
         {
             data.kitchenObjectId = GetKitchenObject().GetKitchenObjectSO().name;
-            data.grillProgress = Mathf.RoundToInt(grillProgress);
+            data.grillStartTimestamp = grillStartTime?.ToBinary() ?? 0;
             data.isBurnt = isBurnt;
         }
         else
         {
             data.kitchenObjectId = "";
-            data.grillProgress = 0;
+            data.grillStartTimestamp = 0;
             data.isBurnt = false;
         }
 
@@ -161,7 +211,7 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
 
     public override void LoadFromSaveData(GrillMachineData data)
     {
-        grillProgress = data.grillProgress;
+        grillStartTime = data.grillStartTimestamp != 0 ? DateTime.FromBinary(data.grillStartTimestamp) : (DateTime?)null;
         isBurnt = data.isBurnt;
 
         if (!string.IsNullOrEmpty(data.kitchenObjectId))
@@ -176,7 +226,7 @@ public class GrillMachine : BaseMachine<GrillMachineData>, IHasProgress
                 {
                     OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
                     {
-                        progressNormalized = grillProgress / recipe.grillProgressMax
+                        progressNormalized = Mathf.Clamp01(grillProgress / recipe.grillProgressMax)
                     });
                 }
             }

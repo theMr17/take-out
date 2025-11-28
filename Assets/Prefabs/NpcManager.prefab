@@ -56,13 +56,28 @@ MonoBehaviour:
     functionArguments:
     - argumentName: orderItems
       argumentType: list
-      argumentDescription: The list should items should be exactly same as the available
-        items send in the game state info
+      argumentDescription: The list should contain items should be exactly same as
+        the available items send in the game state info
       required: 1
     neverRespondWithMessage: 0
   - name: leave
     description: Despawns the customer, should be called when all the orders have
       been received or the customer is frustrated by the behaviour of the player
+    functionArguments: []
+    neverRespondWithMessage: 0
+  - name: return-wrong-item
+    description: This returns the wrong item given to you. Call it depending on your
+      wish. Not compulsory to call.
+    functionArguments:
+    - argumentName: kitchenObjectSo
+      argumentType: string
+      argumentDescription: The wrong item given to you. The item name should be exactly
+        same as the available items send in the game state info.
+      required: 1
+    neverRespondWithMessage: 0
+  - name: heal-player
+    description: This will increase the health of the player by 1. Call only if you
+      are the Old Lady.
     functionArguments: []
     neverRespondWithMessage: 0
   functionHandler:
@@ -129,8 +144,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3585354004586069687}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.88, y: -0.85, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

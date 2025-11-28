@@ -13,13 +13,7 @@ MonoBehaviour:
   m_Name: Page 2
   m_EditorClassIdentifier: Assembly-CSharp::DiaryPageSo
   pageTitle: Night 2
-  pageContent: 'Colder tonight. Whispers behind my back, never a face.
-
-
-    One
-    man said he thirsted for the river that bubbles in darkness, sweet yet bitter
-    as sin. I gave him what sparkled, and his throat swallowed without sound.
-
-
-    I
-    swear I heard fizzing even after the kiosk was silent.'
+  pageContent: "Colder tonight. Whispers behind my back, never a face.\n\nA pale
+    man came, smiling too wide. He wanted the golden shards, countless, thin, born
+    of oil\u2019s fire. I handed them over. He devoured every one, chewing long after
+    the food was gone.\n\nI swear I heard fizzing even after the kiosk was silent."

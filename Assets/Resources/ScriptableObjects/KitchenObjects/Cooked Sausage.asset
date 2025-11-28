@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
   prefab: {fileID: 245638696118810352, guid: 66a610d38ebd94042b7769449f7d392f, type: 3}
   icon: {fileID: -810003009, guid: 3fa4b1bcd3ca9eb4ea46f3afe69450cc, type: 3}
-  objectName: Cooking Sausage
+  objectName: Cooked Sausage
   maxStackedQuantity: 10

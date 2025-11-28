@@ -13,7 +13,7 @@ namespace player2_sdk
     /// </summary>
     public class WebGLAudioPlayer : IAudioPlayer
     {
-        public IEnumerator PlayAudioFromDataUrl(string dataUrl, AudioSource audioSource, string identifier)
+        public IEnumerator PlayAudioFromDataUrl(string dataUrl, AudioSource audioSource, string identifier, Action<float> onAudioReady)
         {
             // Validate input parameters
             if (string.IsNullOrEmpty(dataUrl))
@@ -94,6 +94,7 @@ namespace player2_sdk
                         {
                             audioSource.clip = clip;
                             audioSource.Play();
+                            onAudioReady?.Invoke(clip.length);
                             Debug.Log($"Playing audio for {identifier} (duration: {clip.length}s)");
                         }
                         else
@@ -136,6 +137,8 @@ namespace player2_sdk
 
                 // Call JavaScript function to play audio
                 PlayAudioWithJavaScript(identifier, base64Audio, audioSource);
+
+                // onAudioReady?.Invoke(5f); // Assume 5 seconds duration if unknown
 
                 Debug.Log($"Playing audio for {identifier} using JavaScript interop");
             }

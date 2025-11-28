@@ -17,7 +17,7 @@ public class CounterSceneManager : MonoBehaviour
 
   private void GameManager_OnCustomerChanged(object sender, GameManager.OnCustomerChangedArgs e)
   {
-    SetupCustomerVisual();
+    // SetupCustomerVisual();
   }
 
   private void SetupCustomerVisual()

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
+  m_Name: Pizza Dough
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
+  prefab: {fileID: 5155662329304353871, guid: f0ad7e9f2e6b57a4fbbe9091e068197f, type: 3}
+  icon: {fileID: 1178540802, guid: dbf1a738f01c129419684b556b725ddb, type: 3}
+  objectName: Pizza Dough
+  maxStackedQuantity: 1

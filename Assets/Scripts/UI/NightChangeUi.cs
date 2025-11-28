@@ -4,9 +4,22 @@ using UnityEngine;
 
 public class NightChangeUi : MonoBehaviour
 {
+  public static NightChangeUi Instance { get; private set; }
+
   [SerializeField] private GameObject nightChangePanel;
   [SerializeField] private TextMeshProUGUI nightText;
   [SerializeField] private float displayDuration = 2f;
+
+  private void Awake()
+  {
+    if (Instance != null && Instance != this)
+    {
+      Destroy(gameObject);
+      return;
+    }
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+  }
 
   private void Start()
   {

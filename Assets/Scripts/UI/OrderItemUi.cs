@@ -5,15 +5,24 @@ using UnityEngine.UI;
 public class OrderItemUi : MonoBehaviour
 {
   [SerializeField] private Image iconImage;
+  [SerializeField] private Sprite unknownIconImage;
   [SerializeField] private TextMeshProUGUI orderNameText;
 
   [SerializeField] private TextMeshProUGUI orderQuantityText;
 
 
-  public void SetKitchenObject(KitchenObjectSo kitchenObjectSo, int quantity = 1)
+  public void SetKitchenObject(KitchenObjectSo kitchenObjectSo, int quantity = 1, bool cryptic = false)
   {
-    iconImage.sprite = kitchenObjectSo.icon;
-    orderNameText.text = kitchenObjectSo.name;
+    if (cryptic)
+    {
+      iconImage.sprite = unknownIconImage;
+      orderNameText.text = "Unknown";
+    }
+    else
+    {
+      iconImage.sprite = kitchenObjectSo.icon;
+      orderNameText.text = kitchenObjectSo.name;
+    }
     orderQuantityText.text = $"x{quantity}";
   }
 }

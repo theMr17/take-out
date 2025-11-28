@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976f665b2b504ea41b5bedfbacab2d96, type: 3}
+  m_Name: Plain Burger
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
+  prefab: {fileID: 2702543745538289886, guid: 0dc7ab6fef633b741bdce748e0136a24, type: 3}
+  icon: {fileID: -8763867710485335167, guid: 26c19f86b7d23784d9517f96cd0f9c7e, type: 3}
+  objectName: Plain Burger
+  maxStackedQuantity: 1

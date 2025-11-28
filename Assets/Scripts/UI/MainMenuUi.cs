@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MainMenuUi : MonoBehaviour
@@ -14,6 +13,8 @@ public class MainMenuUi : MonoBehaviour
         _continueButton.onClick.AddListener(OnContinueButtonClicked);
         _newGameButton.onClick.AddListener(OnNewGameButtonClicked);
         _settingsButton.onClick.AddListener(OnSettingsButtonClicked);
+
+        _continueButton.interactable = SaveLoadManager.Exists("game");
     }
 
     private void OnContinueButtonClicked()
@@ -28,6 +29,7 @@ public class MainMenuUi : MonoBehaviour
 
     private void OnNewGameButtonClicked()
     {
+        SaveLoadManager.Delete("game");
         SceneLoader.Instance.LoadScene(SceneLoader.Scene.CounterScene);
     }
 }

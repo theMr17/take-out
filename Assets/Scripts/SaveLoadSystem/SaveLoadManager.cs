@@ -34,4 +34,10 @@ public static class SaveLoadManager
       Debug.Log($"Deleted save file {fileName}");
     }
   }
+
+  public static bool Exists(string fileName)
+  {
+    string path = Path.Combine(SaveFolder, $"{fileName}.json");
+    return File.Exists(path);
+  }
 }

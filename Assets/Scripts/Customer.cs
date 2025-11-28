@@ -3,13 +3,11 @@ using UnityEngine.EventSystems;
 
 public class Customer : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+  [SerializeField] private float lifeDecreaseOnWrongItem = 0.5f;
+
   public void OnPointerClick(PointerEventData eventData)
   {
-    var selectedKitchenObjectSo = InventoryManager.Instance.GetKitchenObjectSoFromSelectedSlot();
-    if (GameManager.Instance.CanSubmitOrder(selectedKitchenObjectSo))
-    {
-      GameManager.Instance.SubmitOrder();
-    }
+    GameManager.Instance.SubmitOrder();
   }
 
   public void OnPointerEnter(PointerEventData eventData)
@@ -32,5 +30,10 @@ public class Customer : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
   {
     if (DialogUi.Instance == null) return;
     DialogUi.Instance.SetDialogBackground(mirrored);
+  }
+
+  public float GetLifeDecreaseOnWrongItem()
+  {
+    return lifeDecreaseOnWrongItem;
   }
 }

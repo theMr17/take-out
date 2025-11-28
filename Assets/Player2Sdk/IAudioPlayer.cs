@@ -1,5 +1,6 @@
 namespace player2_sdk
 {
+    using System;
     using System.Collections;
     using UnityEngine;
 
@@ -15,6 +16,6 @@ namespace player2_sdk
         /// <param name="audioSource">AudioSource component to play through</param>
         /// <param name="identifier">Identifier for logging purposes (e.g., NPC ID)</param>
         /// <returns>Coroutine enumerator for the playback operation</returns>
-        IEnumerator PlayAudioFromDataUrl(string dataUrl, AudioSource audioSource, string identifier);
+        IEnumerator PlayAudioFromDataUrl(string dataUrl, AudioSource audioSource, string identifier, Action<float> onAudioReady);
     }
 }

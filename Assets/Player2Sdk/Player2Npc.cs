@@ -139,12 +139,14 @@ namespace player2_sdk
                 short_name = shortName,
                 name = fullName,
                 character_description = characterDescription,
-                system_prompt = systemPrompt + " Responses should be brief min 50 chars, max 150 chars." +
+                system_prompt = systemPrompt + " Responses should be brief min 50 chars, max 150 chars. Responding with a message is compulsory." +
                 "All NPCs are customers at a late-night roadside food kiosk. They always place an order for food or drink before or during conversation. " +
                 "Their dialogue may include strange, cryptic, or unsettling remarks, " +
                 "but they must remain in-character as customers speaking with the worker behind the counter. " +
                 "Every interaction begins with ordering or referencing food, and their behavior is rooted in being a diner patron, " +
-                "no matter how supernatural or eerie their personality becomes.",
+                "no matter how supernatural or eerie their personality becomes." +
+                "The NPC should leave once they received all the orders and should not place another order." +
+                "The NPC should always send a list of 2 options which the player can respond with. The options should be relevant to the current conversation and should not be generic and should not include any action like handling order. Always send your message as a reply dont just send options.",
                 commands = npcManager.GetSerializableFunctions(),
                 tts = new TTSInfo
                 {
@@ -282,6 +284,11 @@ namespace player2_sdk
                 string error = $"Failed to send message: {request.error} - Response: {request.downloadHandler.text}{traceInfo}";
                 Debug.LogError(error);
             }
+        }
+
+        public string GetNpcId()
+        {
+            return _npcID;
         }
     }
 }
